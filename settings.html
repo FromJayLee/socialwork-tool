@@ -6,13 +6,12 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>사회복지사 업무 관리 시스템 · 설정</title>
 
-    <!-- 필기체 로고 폰트 (기존 페이지와 동일) -->
+    <!-- 필기체 로고 폰트 (다른 탭과 동일) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
     <style>
-        /* ===== 공통 토큰(홈/실적/예산과 동일 팔레트) ===== */
         :root {
             --bg: #0c0f13;
             --card: #151a22;
@@ -60,7 +59,7 @@
         }
 
         .wrap {
-            max-width: 1200px;
+            max-width: 860px;
             margin: 0 auto;
             padding: 0 16px;
         }
@@ -125,17 +124,11 @@
             padding: 24px 0 56px
         }
 
-        /* 공통 카드/레이아웃 */
-        .grid {
-            display: grid;
-            gap: var(--gap);
-            grid-template-columns: 1fr
-        }
-
-        @media (min-width:900px) {
-            .grid {
-                grid-template-columns: 1fr 1fr
-            }
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px
         }
 
         .card {
@@ -160,13 +153,6 @@
             font-size: 13px
         }
 
-        .section {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 24px
-        }
-
         .toolbar {
             display: flex;
             flex-wrap: wrap;
@@ -177,7 +163,7 @@
             display: flex;
             flex-direction: column;
             gap: 6px;
-            min-width: 160px
+            min-width: 140px
         }
 
         .field label {
@@ -232,18 +218,6 @@
             cursor: not-allowed
         }
 
-        .pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 8px;
-            border-radius: 999px;
-            background: var(--chip);
-            color: var(--muted);
-            font-size: 12px;
-            border: 1px solid var(--line)
-        }
-
         .empty {
             padding: 10px;
             border: 1px dashed var(--line);
@@ -256,7 +230,6 @@
             font-variant-numeric: tabular-nums
         }
 
-        /* 테이블 */
         .twrap {
             overflow: auto;
             border: 1px solid var(--line);
@@ -295,24 +268,6 @@
         .center {
             text-align: center
         }
-
-        <style id="layout-override">
-
-        /* 설정탭: 1열 세로 배치 + 컨테이너 폭 축소 */
-        .wrap {
-            max-width: 860px !important;
-        }
-
-        section.grid {
-            grid-template-columns: 1fr !important;
-        }
-
-        /* 혹시 컬럼이 남아 있어도 기사 카드가 한 줄 전체를 차지하도록 */
-        section.grid>article {
-            grid-column: 1 / -1 !important;
-        }
-    </style>
-
     </style>
 </head>
 
@@ -334,203 +289,201 @@
     </header>
 
     <main class="wrap">
-        <section class="grid">
-            <!-- 1) 사업 관리 -->
-            <article class="card section" aria-label="사업 관리">
-                <h3>사업 관리 <span class="sub">(사례관리·지역조직화·서비스제공)</span></h3>
-                <div class="toolbar">
-                    <div class="field" style="min-width:220px">
-                        <label for="p-name">사업명</label>
-                        <input id="p-name" type="text" placeholder="예: 행복맘, 노인교실" />
-                    </div>
-                    <div class="field">
-                        <label for="p-cat">분류</label>
-                        <select id="p-cat">
-                            <option value="">선택</option>
-                            <option value="사례관리">사례관리</option>
-                            <option value="지역조직화">지역조직화</option>
-                            <option value="서비스제공">서비스제공</option>
-                        </select>
-                    </div>
-                    <div style="margin-left:auto; display:flex; gap:8px; align-items:flex-end">
-                        <button id="p-add" class="btn">추가</button>
-                        <button id="p-cancel" class="btn ghost" style="display:none">취소</button>
-                    </div>
+        <!-- 1) 사업 관리 -->
+        <section class="card section" aria-label="사업 관리">
+            <h3>사업 관리 <span class="sub">(사례관리·지역조직화·서비스제공)</span></h3>
+            <div class="toolbar">
+                <div class="field" style="min-width:220px">
+                    <label for="p-name">사업명</label>
+                    <input id="p-name" type="text" placeholder="예: 행복맘, 노인교실" />
                 </div>
-                <div class="twrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="min-width:220px">사업명</th>
-                                <th>분류</th>
-                                <th class="center" style="min-width:140px">수정</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tb-programs">
-                            <tr>
-                                <td colspan="3">
-                                    <div class="empty">등록된 사업이 없습니다.</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="field">
+                    <label for="p-cat">분류</label>
+                    <select id="p-cat">
+                        <option value="">선택</option>
+                        <option value="사례관리">사례관리</option>
+                        <option value="지역조직화">지역조직화</option>
+                        <option value="서비스제공">서비스제공</option>
+                    </select>
                 </div>
-            </article>
+                <div style="margin-left:auto; display:flex; gap:8px; align-items:flex-end">
+                    <button id="p-add" class="btn">추가</button>
+                    <button id="p-cancel" class="btn ghost" style="display:none">취소</button>
+                </div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width:220px">사업명</th>
+                            <th>분류</th>
+                            <th class="center" style="min-width:140px">수정</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-programs">
+                        <tr>
+                            <td colspan="3">
+                                <div class="empty">등록된 사업이 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-            <!-- 2) 활동 목표(세부활동1/2 + 목표 회기·인원) -->
-            <article class="card section" aria-label="활동 목표">
-                <h3>활동 목표 설정 <span class="sub">세부활동1은 필수, 2는 선택</span></h3>
-                <div class="toolbar">
-                    <div class="field">
-                        <label for="a-prog">사업명</label>
-                        <select id="a-prog"></select>
-                    </div>
-                    <div class="field">
-                        <label for="a-a1">세부활동1</label>
-                        <input id="a-a1" type="text" placeholder="예: 공예활동 / 건강체조" />
-                    </div>
-                    <div class="field">
-                        <label for="a-a2">세부활동2(선택)</label>
-                        <input id="a-a2" type="text" placeholder="예: 수면체조, 댄스교실" />
-                    </div>
-                    <div class="field" style="min-width:140px">
-                        <label for="a-sessions">목표 회기</label>
-                        <input id="a-sessions" type="number" inputmode="numeric" min="0" step="1" placeholder="0" />
-                    </div>
-                    <div class="field" style="min-width:160px">
-                        <label for="a-people">목표 인원(합계)</label>
-                        <input id="a-people" type="number" inputmode="numeric" min="0" step="1" placeholder="0" />
-                    </div>
-                    <div style="margin-left:auto; display:flex; gap:8px; align-items:flex-end">
-                        <button id="a-add" class="btn">추가</button>
-                        <button id="a-cancel" class="btn ghost" style="display:none">취소</button>
-                    </div>
+        <!-- 2) 활동 목표 -->
+        <section class="card section" aria-label="활동 목표">
+            <h3>활동 목표 설정 <span class="sub">세부활동1 필수 · 2 선택</span></h3>
+            <div class="toolbar">
+                <div class="field">
+                    <label for="a-prog">사업명</label>
+                    <select id="a-prog"></select>
                 </div>
-                <div class="twrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="min-width:260px">사업 · 활동</th>
-                                <th class="center">목표 회기</th>
-                                <th class="right">목표 인원</th>
-                                <th class="center" style="min-width:140px">수정</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tb-activities">
-                            <tr>
-                                <td colspan="4">
-                                    <div class="empty">등록된 활동이 없습니다.</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="field">
+                    <label for="a-a1">세부활동1</label>
+                    <input id="a-a1" type="text" placeholder="예: 공예활동 / 건강체조" />
                 </div>
-            </article>
+                <div class="field">
+                    <label for="a-a2">세부활동2(선택)</label>
+                    <input id="a-a2" type="text" placeholder="예: 수면체조, 댄스교실" />
+                </div>
+                <div class="field" style="min-width:140px">
+                    <label for="a-sessions">목표 회기</label>
+                    <input id="a-sessions" type="number" inputmode="numeric" min="0" step="1" placeholder="0" />
+                </div>
+                <div class="field" style="min-width:160px">
+                    <label for="a-people">목표 인원(합계)</label>
+                    <input id="a-people" type="number" inputmode="numeric" min="0" step="1" placeholder="0" />
+                </div>
+                <div style="margin-left:auto; display:flex; gap:8px; align-items:flex-end">
+                    <button id="a-add" class="btn">추가</button>
+                    <button id="a-cancel" class="btn ghost" style="display:none">취소</button>
+                </div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width:260px">사업 · 활동</th>
+                            <th class="center">목표 회기</th>
+                            <th class="right">목표 인원</th>
+                            <th class="center" style="min-width:140px">수정</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-activities">
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty">등록된 활동이 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-            <!-- 3) 예산 계획(항목별 계획금액) -->
-            <article class="card section" aria-label="예산 계획">
-                <h3>예산 계획 설정 <span class="sub">활동·항목별 계획금액</span></h3>
-                <div class="toolbar">
-                    <div class="field">
-                        <label for="b-prog">사업명</label>
-                        <select id="b-prog"></select>
-                    </div>
-                    <div class="field">
-                        <label for="b-a1">세부활동1</label>
-                        <select id="b-a1"></select>
-                    </div>
-                    <div class="field">
-                        <label for="b-a2">세부활동2(선택)</label>
-                        <select id="b-a2"></select>
-                    </div>
-                    <div class="field" style="min-width:180px">
-                        <label for="b-item">항목</label>
-                        <input id="b-item" type="text" placeholder="예: 강사비, 재료비" />
-                    </div>
-                    <div class="field" style="min-width:160px">
-                        <label for="b-plan">계획금액(원)</label>
-                        <input id="b-plan" type="number" inputmode="numeric" min="0" step="1" placeholder="0" />
-                    </div>
-                    <div style="margin-left:auto; display:flex; gap:8px; align-items:flex-end">
-                        <button id="b-add" class="btn">추가</button>
-                        <button id="b-cancel" class="btn ghost" style="display:none">취소</button>
-                    </div>
+        <!-- 3) 예산 계획 -->
+        <section class="card section" aria-label="예산 계획">
+            <h3>예산 계획 설정 <span class="sub">활동·항목별 계획금액</span></h3>
+            <div class="toolbar">
+                <div class="field">
+                    <label for="b-prog">사업명</label>
+                    <select id="b-prog"></select>
                 </div>
-                <div class="twrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="min-width:320px">사업 · 활동 · 항목</th>
-                                <th class="right">계획(원)</th>
-                                <th class="center" style="min-width:140px">수정</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tb-budgets">
-                            <tr>
-                                <td colspan="3">
-                                    <div class="empty">등록된 예산 계획이 없습니다.</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="field">
+                    <label for="b-a1">세부활동1</label>
+                    <select id="b-a1"></select>
                 </div>
-            </article>
+                <div class="field">
+                    <label for="b-a2">세부활동2(선택)</label>
+                    <select id="b-a2"></select>
+                </div>
+                <div class="field" style="min-width:180px">
+                    <label for="b-item">항목</label>
+                    <input id="b-item" type="text" placeholder="예: 강사비, 재료비" />
+                </div>
+                <div class="field" style="min-width:160px">
+                    <label for="b-plan">계획금액(원)</label>
+                    <input id="b-plan" type="number" inputmode="numeric" min="0" step="1" placeholder="0" />
+                </div>
+                <div style="margin-left:auto; display:flex; gap:8px; align-items:flex-end">
+                    <button id="b-add" class="btn">추가</button>
+                    <button id="b-cancel" class="btn ghost" style="display:none">취소</button>
+                </div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width:320px">사업 · 활동 · 항목</th>
+                            <th class="right">계획(원)</th>
+                            <th class="center" style="min-width:140px">수정</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-budgets">
+                        <tr>
+                            <td colspan="3">
+                                <div class="empty">등록된 예산 계획이 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-            <!-- 4) 일정 계획(회기번호 1..총회기 + 예정일) -->
-            <article class="card section" aria-label="일정 계획">
-                <h3>일정 계획 설정 <span class="sub">회기번호는 목표 회기 기준 자동 생성</span></h3>
-                <div class="toolbar">
-                    <div class="field">
-                        <label for="s-prog">사업명</label>
-                        <select id="s-prog"></select>
-                    </div>
-                    <div class="field">
-                        <label for="s-a1">세부활동1</label>
-                        <select id="s-a1"></select>
-                    </div>
-                    <div class="field">
-                        <label for="s-a2">세부활동2(선택)</label>
-                        <select id="s-a2"></select>
-                    </div>
-                    <div class="field" style="min-width:140px">
-                        <label for="s-session">회기번호</label>
-                        <select id="s-session"></select>
-                    </div>
-                    <div class="field" style="min-width:160px">
-                        <label for="s-date">예정일</label>
-                        <input id="s-date" type="date" />
-                    </div>
-                    <div style="margin-left:auto; display:flex; gap:8px; align-items:flex-end">
-                        <button id="s-add" class="btn">추가</button>
-                        <button id="s-cancel" class="btn ghost" style="display:none">취소</button>
-                    </div>
+        <!-- 4) 일정 계획 -->
+        <section class="card section" aria-label="일정 계획">
+            <h3>일정 계획 설정 <span class="sub">회기번호는 목표 회기 기준 자동 생성</span></h3>
+            <div class="toolbar">
+                <div class="field">
+                    <label for="s-prog">사업명</label>
+                    <select id="s-prog"></select>
                 </div>
-                <div class="twrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="min-width:300px">사업 · 활동</th>
-                                <th class="center">회기</th>
-                                <th class="center">예정일</th>
-                                <th class="center">상태</th>
-                                <th class="center" style="min-width:140px">수정</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tb-schedules">
-                            <tr>
-                                <td colspan="5">
-                                    <div class="empty">등록된 일정이 없습니다.</div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div class="field">
+                    <label for="s-a1">세부활동1</label>
+                    <select id="s-a1"></select>
                 </div>
-            </article>
+                <div class="field">
+                    <label for="s-a2">세부활동2(선택)</label>
+                    <select id="s-a2"></select>
+                </div>
+                <div class="field" style="min-width:140px">
+                    <label for="s-session">회기번호</label>
+                    <select id="s-session"></select>
+                </div>
+                <div class="field" style="min-width:160px">
+                    <label for="s-date">예정일</label>
+                    <input id="s-date" type="date" />
+                </div>
+                <div style="margin-left:auto; display:flex; gap:8px; align-items:flex-end">
+                    <button id="s-add" class="btn">추가</button>
+                    <button id="s-cancel" class="btn ghost" style="display:none">취소</button>
+                </div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width:300px">사업 · 활동</th>
+                            <th class="center">회기</th>
+                            <th class="center">예정일</th>
+                            <th class="center">상태</th>
+                            <th class="center" style="min-width:140px">수정</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-schedules">
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty">등록된 일정이 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
     </main>
 
     <script>
-        /* ===== 상태(모든 탭 공유) ===== */
+        // ===== 상태 (다른 탭과 공유) =====
         const LS_KEY = 'swms_home_v1';
         const EMPTY_STATE = Object.freeze({
             settings: { programs: [], activities: [], budgets: [], schedules: [] },
@@ -539,20 +492,18 @@
         });
         function loadState() { try { const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : structuredClone(EMPTY_STATE); } catch { return structuredClone(EMPTY_STATE); } }
         function saveState(s) { localStorage.setItem(LS_KEY, JSON.stringify(s)); }
-        function debounce(fn, ms = 600) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); }; }
 
-        /* ===== 전역 ===== */
-        let state = loadState();
-        let editing = { program: null, activity: null, budget: null, schedule: null };
-
-        /* ===== 유틸 ===== */
+        // ===== 유틸 =====
         const $ = q => document.querySelector(q);
         const pad = n => String(n).padStart(2, '0');
         const fmtDate = d => { const T = d instanceof Date ? d : new Date(d); return `${T.getFullYear()}-${pad(T.getMonth() + 1)}-${pad(T.getDate())}`; };
-        const sumBy = (arr, sel) => arr.reduce((s, x) => s + (+sel(x) || 0), 0);
         const makeId = () => `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 
-        /* ===== 폼 요소 ===== */
+        // ===== 전역 =====
+        let state = loadState();
+        let editing = { program: null, activity: null, budget: null, schedule: null };
+
+        // ===== DOM =====
         // 프로그램
         const pName = $('#p-name'), pCat = $('#p-cat'), pAdd = $('#p-add'), pCancel = $('#p-cancel'), tbPrograms = $('#tb-programs');
         // 활동
@@ -562,11 +513,10 @@
         // 일정
         const sProg = $('#s-prog'), sA1 = $('#s-a1'), sA2 = $('#s-a2'), sSession = $('#s-session'), sDate = $('#s-date'), sAdd = $('#s-add'), sCancel = $('#s-cancel'), tbSchedules = $('#tb-schedules');
 
-        /* ===== 옵션 채우기 공통 ===== */
-        function fillProgramOptions(selectEl, withEmpty = false) {
-            selectEl.innerHTML = '';
-            if (withEmpty) selectEl.append(new Option('선택', ''));
-            state.settings.programs.forEach(p => selectEl.append(new Option(p.name, p.id)));
+        // ===== 옵션 유틸 =====
+        function fillProgramOptions(sel, withEmpty = false) {
+            sel.innerHTML = ''; if (withEmpty) sel.append(new Option('선택', ''));
+            state.settings.programs.forEach(p => sel.append(new Option(p.name, p.id)));
         }
         function a1List(programId) {
             return [...new Set(state.settings.activities.filter(a => a.programId === programId).map(a => a.a1))];
@@ -574,34 +524,32 @@
         function a2List(programId, a1) {
             return [...new Set(state.settings.activities.filter(a => a.programId === programId && a.a1 === a1).map(a => a.a2).filter(v => v != null && v !== ''))];
         }
-        function fillA1Options(selectEl, programId, withEmpty = false) {
-            selectEl.innerHTML = '';
-            if (withEmpty) selectEl.append(new Option('선택', ''));
-            if (!programId) return;
-            a1List(programId).forEach(v => selectEl.append(new Option(v, v)));
+        function fillA1Options(sel, programId, withEmpty = false) {
+            sel.innerHTML = ''; if (withEmpty) sel.append(new Option('선택', ''));
+            if (!programId) return; a1List(programId).forEach(v => sel.append(new Option(v, v)));
         }
-        function fillA2Options(selectEl, programId, a1, withEmpty = true, emptyLabel = '없음') {
-            selectEl.innerHTML = '';
-            if (withEmpty) selectEl.append(new Option(emptyLabel, ''));
-            if (!programId || !a1) return;
-            a2List(programId, a1).forEach(v => selectEl.append(new Option(v, v)));
+        function fillA2Options(sel, programId, a1, withEmpty = true, emptyLabel = '없음') {
+            sel.innerHTML = ''; if (withEmpty) sel.append(new Option(emptyLabel, ''));
+            if (!programId || !a1) return; a2List(programId, a1).forEach(v => sel.append(new Option(v, v)));
         }
         function targetSessionsOf(programId, a1, a2) {
             const row = state.settings.activities.find(r => r.programId === programId && r.a1 === a1 && (r.a2 || '') === (a2 || ''));
             return row ? (+row.targetSessions || 0) : 0;
         }
-        function fillSessionOptions(selectEl, programId, a1, a2) {
-            selectEl.innerHTML = '';
+        function fillSessionOptions(sel, programId, a1, a2) {
+            sel.innerHTML = '';
             const n = targetSessionsOf(programId, a1, a2);
-            if (n <= 0) { selectEl.append(new Option('설정된 회기 없음', '')); return; }
-            selectEl.append(new Option('선택', ''));
-            for (let i = 1; i <= n; i++) selectEl.append(new Option(String(i), String(i)));
+            if (n <= 0) { sel.append(new Option('설정된 회기 없음', '')); return; }
+            sel.append(new Option('선택', ''));
+            for (let i = 1; i <= n; i++) sel.append(new Option(String(i), String(i)));
         }
 
-        /* ===== 렌더 ===== */
+        // ===== 렌더 =====
         function renderPrograms() {
             tbPrograms.innerHTML = '';
-            if (state.settings.programs.length === 0) { tbPrograms.innerHTML = `<tr><td colspan="3"><div class="empty">등록된 사업이 없습니다.</div></td></tr>`; return; }
+            if (state.settings.programs.length === 0) {
+                tbPrograms.innerHTML = `<tr><td colspan="3"><div class="empty">등록된 사업이 없습니다.</div></td></tr>`; return;
+            }
             state.settings.programs.forEach(p => {
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -613,28 +561,33 @@
           </td>`;
                 tbPrograms.appendChild(tr);
             });
-            // 이벤트
-            tbPrograms.querySelectorAll('button[data-edit]').forEach(btn => btn.onclick = () => {
-                const id = btn.getAttribute('data-edit'); const row = state.settings.programs.find(x => x.id === id); if (!row) return;
-                editing.program = id; pName.value = row.name; pCat.value = row.category || ''; pAdd.textContent = '저장'; pCancel.style.display = 'inline-block';
+            tbPrograms.querySelectorAll('[data-edit]').forEach(btn => btn.onclick = () => {
+                const id = btn.getAttribute('data-edit');
+                const row = state.settings.programs.find(x => x.id === id); if (!row) return;
+                editing.program = id; pName.value = row.name; pCat.value = row.category || '';
+                pAdd.textContent = '저장'; pCancel.style.display = 'inline-block';
             });
-            tbPrograms.querySelectorAll('button[data-del]').forEach(btn => btn.onclick = () => {
+            tbPrograms.querySelectorAll('[data-del]').forEach(btn => btn.onclick = () => {
                 const id = btn.getAttribute('data-del');
+                // 연쇄 제거
                 state.settings.programs = state.settings.programs.filter(x => x.id !== id);
-                // 연쇄 삭제: 해당 programId 참조 행 제거
                 state.settings.activities = state.settings.activities.filter(x => x.programId !== id);
                 state.settings.budgets = state.settings.budgets.filter(x => x.programId !== id);
                 state.settings.schedules = state.settings.schedules.filter(x => x.programId !== id);
-                persistAndRefresh();
+                persist();
+                renderAll();
             });
         }
 
         function renderActivities() {
             tbActivities.innerHTML = '';
-            if (state.settings.activities.length === 0) { tbActivities.innerHTML = `<tr><td colspan="4"><div class="empty">등록된 활동이 없습니다.</div></td></tr>`; return; }
+            if (state.settings.activities.length === 0) {
+                tbActivities.innerHTML = `<tr><td colspan="4"><div class="empty">등록된 활동이 없습니다.</div></td></tr>`; return;
+            }
             const progName = id => state.settings.programs.find(p => p.id === id)?.name || id;
             state.settings.activities
-                .slice().sort((a, b) => (progName(a.programId) + a.a1 + (a.a2 || '')).localeCompare(progName(b.programId) + b.a1 + (b.a2 || '')))
+                .slice()
+                .sort((a, b) => (progName(a.programId) + a.a1 + (a.a2 || '')).localeCompare(progName(b.programId) + b.a1 + (b.a2 || ''), 'ko'))
                 .forEach(a => {
                     const title = `${progName(a.programId)} · ${a.a1}${a.a2 ? (' · ' + a.a2) : ''}`;
                     const tr = document.createElement('tr');
@@ -648,30 +601,37 @@
             </td>`;
                     tbActivities.appendChild(tr);
                 });
-            tbActivities.querySelectorAll('button[data-edit]').forEach(btn => btn.onclick = () => {
-                const id = btn.getAttribute('data-edit'); const row = state.settings.activities.find(x => x.id === id); if (!row) return;
+            tbActivities.querySelectorAll('[data-edit]').forEach(btn => btn.onclick = () => {
+                const id = btn.getAttribute('data-edit');
+                const row = state.settings.activities.find(x => x.id === id); if (!row) return;
                 editing.activity = id;
-                aProg.value = row.programId; aA1.value = row.a1; aA2.value = row.a2 || ''; aSessions.value = row.targetSessions || 0; aPeople.value = row.targetParticipants || 0;
+                aProg.value = row.programId; aA1.value = row.a1; aA2.value = row.a2 || '';
+                aSessions.value = row.targetSessions || 0; aPeople.value = row.targetParticipants || 0;
                 aAdd.textContent = '저장'; aCancel.style.display = 'inline-block';
             });
-            tbActivities.querySelectorAll('button[data-del]').forEach(btn => btn.onclick = () => {
+            tbActivities.querySelectorAll('[data-del]').forEach(btn => btn.onclick = () => {
                 const id = btn.getAttribute('data-del');
-                // 일정/예산에서 동일 키를 참조할 수 있으므로 일정·예산도 함께 제거 여부 판단.
-                state.settings.activities = state.settings.activities.filter(x => x.id !== id);
-                // 해당 키의 일정은 남길 수도 있지만 충돌 방지를 위해 제거
-                const delKeys = []; // programId|a1|a2
                 const row = state.settings.activities.find(x => x.id === id);
-                if (row) delKeys.push([row.programId, row.a1, row.a2 || ''].join('|'));
-                persistAndRefresh();
+                state.settings.activities = state.settings.activities.filter(x => x.id !== id);
+                // 동일 키의 예산/일정도 제거(충돌 방지)
+                if (row) {
+                    const k = (r) => [r.programId, r.a1, (r.a2 || '')].join('|');
+                    state.settings.budgets = state.settings.budgets.filter(b => k(b) !== k(row));
+                    state.settings.schedules = state.settings.schedules.filter(s => k(s) !== k(row));
+                }
+                persist(); renderAll();
             });
         }
 
         function renderBudgets() {
             tbBudgets.innerHTML = '';
-            if (state.settings.budgets.length === 0) { tbBudgets.innerHTML = `<tr><td colspan="3"><div class="empty">등록된 예산 계획이 없습니다.</div></td></tr>`; return; }
+            if (state.settings.budgets.length === 0) {
+                tbBudgets.innerHTML = `<tr><td colspan="3"><div class="empty">등록된 예산 계획이 없습니다.</div></td></tr>`; return;
+            }
             const progName = id => state.settings.programs.find(p => p.id === id)?.name || id;
             state.settings.budgets
-                .slice().sort((x, y) => (progName(x.programId) + x.a1 + (x.a2 || '') + x.item).localeCompare(progName(y.programId) + y.a1 + (y.a2 || '') + y.item))
+                .slice()
+                .sort((x, y) => (progName(x.programId) + x.a1 + (x.a2 || '') + x.item).localeCompare(progName(y.programId) + y.a1 + (y.a2 || '') + y.item, 'ko'))
                 .forEach(b => {
                     const title = `${progName(b.programId)} · ${b.a1}${b.a2 ? (' · ' + b.a2) : ''} · ${b.item}`;
                     const tr = document.createElement('tr');
@@ -684,27 +644,31 @@
             </td>`;
                     tbBudgets.appendChild(tr);
                 });
-            tbBudgets.querySelectorAll('button[data-edit]').forEach(btn => btn.onclick = () => {
-                const id = btn.getAttribute('data-edit'); const row = state.settings.budgets.find(x => x.id === id); if (!row) return;
+            tbBudgets.querySelectorAll('[data-edit]').forEach(btn => btn.onclick = () => {
+                const id = btn.getAttribute('data-edit');
+                const row = state.settings.budgets.find(x => x.id === id); if (!row) return;
                 editing.budget = id;
                 bProg.value = row.programId; fillA1Options(bA1, bProg.value, true); bA1.value = row.a1;
                 fillA2Options(bA2, bProg.value, bA1.value, true, '없음'); bA2.value = row.a2 || '';
                 bItem.value = row.item; bPlan.value = row.planned || 0;
                 bAdd.textContent = '저장'; bCancel.style.display = 'inline-block';
             });
-            tbBudgets.querySelectorAll('button[data-del]').forEach(btn => btn.onclick = () => {
+            tbBudgets.querySelectorAll('[data-del]').forEach(btn => btn.onclick = () => {
                 const id = btn.getAttribute('data-del');
                 state.settings.budgets = state.settings.budgets.filter(x => x.id !== id);
-                persistAndRefresh();
+                persist(); renderBudgets();
             });
         }
 
         function renderSchedules() {
             tbSchedules.innerHTML = '';
-            if (state.settings.schedules.length === 0) { tbSchedules.innerHTML = `<tr><td colspan="5"><div class="empty">등록된 일정이 없습니다.</div></td></tr>`; return; }
+            if (state.settings.schedules.length === 0) {
+                tbSchedules.innerHTML = `<tr><td colspan="5"><div class="empty">등록된 일정이 없습니다.</div></td></tr>`; return;
+            }
             const progName = id => state.settings.programs.find(p => p.id === id)?.name || id;
             state.settings.schedules
-                .slice().sort((a, b) => (a.plannedDate || '').localeCompare(b.plannedDate || '') || (a.sessionNo || 0) - (b.sessionNo || 0))
+                .slice()
+                .sort((a, b) => (a.plannedDate || '').localeCompare(b.plannedDate || '') || (a.sessionNo || 0) - (b.sessionNo || 0))
                 .forEach(s => {
                     const title = `${progName(s.programId)} · ${s.a1}${s.a2 ? (' · ' + s.a2) : ''}`;
                     const tr = document.createElement('tr');
@@ -719,8 +683,9 @@
             </td>`;
                     tbSchedules.appendChild(tr);
                 });
-            tbSchedules.querySelectorAll('button[data-edit]').forEach(btn => btn.onclick = () => {
-                const id = btn.getAttribute('data-edit'); const row = state.settings.schedules.find(x => x.id === id); if (!row) return;
+            tbSchedules.querySelectorAll('[data-edit]').forEach(btn => btn.onclick = () => {
+                const id = btn.getAttribute('data-edit');
+                const row = state.settings.schedules.find(x => x.id === id); if (!row) return;
                 editing.schedule = id;
                 sProg.value = row.programId; fillA1Options(sA1, sProg.value, true); sA1.value = row.a1;
                 fillA2Options(sA2, sProg.value, sA1.value, true, '없음'); sA2.value = row.a2 || '';
@@ -728,30 +693,25 @@
                 sDate.value = row.plannedDate ? fmtDate(row.plannedDate) : '';
                 sAdd.textContent = '저장'; sCancel.style.display = 'inline-block';
             });
-            tbSchedules.querySelectorAll('button[data-del]').forEach(btn => btn.onclick = () => {
+            tbSchedules.querySelectorAll('[data-del]').forEach(btn => btn.onclick = () => {
                 const id = btn.getAttribute('data-del');
                 state.settings.schedules = state.settings.schedules.filter(x => x.id !== id);
-                persistAndRefresh();
+                persist(); renderSchedules();
             });
         }
 
         function renderAll() {
-            // 프로그램 드롭다운 동기화
+            // 드롭다운 동기화
             [aProg, bProg, sProg].forEach(sel => fillProgramOptions(sel, true));
-            // 활동 종속 드롭다운 초기화
             fillA1Options(bA1, bProg.value || '', true); fillA2Options(bA2, bProg.value || '', bA1.value || '', true, '없음');
             fillA1Options(sA1, sProg.value || '', true); fillA2Options(sA2, sProg.value || '', sA1.value || '', true, '없음');
             fillSessionOptions(sSession, sProg.value || '', sA1.value || '', sA2.value || '');
-            // 테이블
-            renderPrograms();
-            renderActivities();
-            renderBudgets();
-            renderSchedules();
+            renderPrograms(); renderActivities(); renderBudgets(); renderSchedules();
         }
 
-        const persistAndRefresh = debounce(() => { saveState(state); renderAll(); }, 50);
+        const persist = () => saveState(state);
 
-        /* ===== 이벤트(입력/수정/삭제) ===== */
+        // ===== 이벤트 =====
         // 프로그램
         pAdd.onclick = () => {
             const name = (pName.value || '').trim(), category = pCat.value || '';
@@ -763,8 +723,7 @@
                 if (state.settings.programs.some(p => p.name === name)) { alert('동일한 사업명이 이미 있습니다.'); return; }
                 state.settings.programs.push({ id: makeId(), name, category });
             }
-            pName.value = ''; pCat.value = '';
-            persistAndRefresh();
+            pName.value = ''; pCat.value = ''; persist(); renderAll();
         };
         pCancel.onclick = () => { editing.program = null; pName.value = ''; pCat.value = ''; pAdd.textContent = '추가'; pCancel.style.display = 'none'; };
 
@@ -774,11 +733,9 @@
             const targetSessions = Math.max(0, parseInt(aSessions.value || '0', 10));
             const targetParticipants = Math.max(0, parseInt(aPeople.value || '0', 10));
             if (!programId || !a1) { alert('사업명과 세부활동1은 필수입니다.'); return; }
-            // 중복 키 방지
             const key = (r) => [r.programId, r.a1, (r.a2 || '')].join('|');
             if (editing.activity) {
                 const row = state.settings.activities.find(r => r.id === editing.activity); if (row) {
-                    // 키 충돌 검사
                     const temp = { programId, a1, a2 }; if (state.settings.activities.some(r => r.id !== row.id && key(r) === key(temp))) { alert('같은 사업·활동 조합이 이미 있습니다.'); return; }
                     Object.assign(row, { programId, a1, a2, targetSessions, targetParticipants });
                 }
@@ -788,7 +745,7 @@
                 state.settings.activities.push({ id: makeId(), programId, a1, a2, targetSessions, targetParticipants });
             }
             aA1.value = ''; aA2.value = ''; aSessions.value = ''; aPeople.value = '';
-            persistAndRefresh();
+            persist(); renderAll();
         };
         aCancel.onclick = () => { editing.activity = null; aAdd.textContent = '추가'; aCancel.style.display = 'none'; aA1.value = ''; aA2.value = ''; aSessions.value = ''; aPeople.value = ''; };
 
@@ -799,7 +756,6 @@
             const programId = bProg.value || '', a1 = bA1.value || '', a2 = bA2.value || '' || null;
             const item = (bItem.value || '').trim(); const planned = Math.max(0, parseInt(bPlan.value || '0', 10));
             if (!programId || !a1 || !item) { alert('사업명, 세부활동1, 항목은 필수입니다.'); return; }
-            // 활동 존재 검증
             const existsAct = state.settings.activities.some(a => a.programId === programId && a.a1 === a1 && (a.a2 || '') === (a2 || ''));
             if (!existsAct) { alert('설정된 활동이 아닙니다. 먼저 활동을 등록하세요.'); return; }
             const key = (r) => [r.programId, r.a1, (r.a2 || ''), r.item].join('|');
@@ -814,8 +770,7 @@
                 if (state.settings.budgets.some(x => key(x) === [programId, a1, (a2 || ''), item].join('|'))) { alert('동일한 활동·항목이 이미 있습니다.'); return; }
                 state.settings.budgets.push({ id: makeId(), programId, a1, a2, item, planned });
             }
-            bItem.value = ''; bPlan.value = '';
-            persistAndRefresh();
+            bItem.value = ''; bPlan.value = ''; persist(); renderBudgets();
         };
         bCancel.onclick = () => { editing.budget = null; bAdd.textContent = '추가'; bCancel.style.display = 'none'; bItem.value = ''; bPlan.value = ''; };
 
@@ -827,40 +782,33 @@
             const programId = sProg.value || '', a1 = sA1.value || '', a2 = sA2.value || '' || null;
             const sessionNo = parseInt(sSession.value || '0', 10); const plannedDate = sDate.value ? fmtDate(sDate.value) : '';
             if (!programId || !a1 || !sessionNo || !plannedDate) { alert('사업명, 세부활동1, 회기, 예정일을 입력하세요.'); return; }
-            // 범위 검증
             const maxSession = targetSessionsOf(programId, a1, a2);
             if (maxSession <= 0) { alert('해당 활동의 목표 회기가 0입니다. 활동 목표를 먼저 설정하세요.'); return; }
             if (sessionNo < 1 || sessionNo > maxSession) { alert(`회기번호는 1~${maxSession} 범위여야 합니다.`); return; }
-            // 중복 키 방지
             const key = (r) => [r.programId, r.a1, (r.a2 || ''), r.sessionNo].join('|');
             if (editing.schedule) {
                 const row = state.settings.schedules.find(x => x.id === editing.schedule); if (row) {
                     const temp = { programId, a1, a2, sessionNo };
                     if (state.settings.schedules.some(x => x.id !== row.id && key(x) === key(temp))) { alert('동일 회기가 이미 존재합니다.'); return; }
-                    Object.assign(row, { programId, a1, a2, sessionNo, plannedDate, done: !!row.done, doneDate: row.done ? (row.doneDate || fmtDate(new Date())) : null });
+                    Object.assign(row, { programId, a1, a2, sessionNo, plannedDate, done: !!row.done, doneDate: row.done ? (row.doneDate || plannedDate) : null });
                 }
                 editing.schedule = null; sAdd.textContent = '추가'; sCancel.style.display = 'none';
             } else {
                 if (state.settings.schedules.some(x => key(x) === [programId, a1, (a2 || ''), sessionNo].join('|'))) { alert('동일 회기가 이미 존재합니다.'); return; }
                 state.settings.schedules.push({ id: makeId(), programId, a1, a2, sessionNo, plannedDate, done: false, doneDate: null });
             }
-            sSession.value = ''; sDate.value = '';
-            persistAndRefresh();
+            sSession.value = ''; sDate.value = ''; persist(); renderSchedules();
         };
         sCancel.onclick = () => { editing.schedule = null; sAdd.textContent = '추가'; sCancel.style.display = 'none'; sSession.value = ''; sDate.value = ''; };
 
-        /* ===== 초기화 ===== */
+        // ===== 초기화 =====
         function init() {
-            // 프로그램 드롭다운 초기 세팅
             [aProg, bProg, sProg].forEach(sel => fillProgramOptions(sel, true));
-            // 활동 종속 드롭다운 초기 세팅
+            // 종속 초기
             fillA1Options(bA1, bProg.value || '', true); fillA2Options(bA2, bProg.value || '', bA1.value || '', true, '없음');
             fillA1Options(sA1, sProg.value || '', true); fillA2Options(sA2, sProg.value || '', sA1.value || '', true, '없음');
             fillSessionOptions(sSession, sProg.value || '', sA1.value || '', sA2.value || '');
-
-            // 오늘 날짜 기본값
             sDate.value = fmtDate(new Date());
-
             renderAll();
         }
         init();
