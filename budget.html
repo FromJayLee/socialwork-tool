@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>사회복지사 업무 관리 시스템 · 사업 예산</title>
 
-    <!-- 필기체 로고 폰트 (홈/실적과 동일) -->
+    <!-- 필기체 로고 폰트 (홈과 동일) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
     <style>
-        /* ===== 홈/실적과 동일 토큰 ===== */
+        /* ===== 공통 토큰/레이아웃 (홈/실적과 동일) ===== */
         :root {
             --bg: #0c0f13;
             --card: #151a22;
@@ -125,7 +125,7 @@
             padding: 24px 0 56px
         }
 
-        /* 공통 카드/텍스트 */
+        /* 카드/텍스트 */
         .card {
             background: var(--card);
             border: 1px solid var(--line);
@@ -172,7 +172,7 @@
             font-variant-numeric: tabular-nums
         }
 
-        /* 이 페이지 전용 레이아웃 */
+        /* 입력/필터 */
         .section {
             display: flex;
             flex-direction: column;
@@ -296,7 +296,7 @@
             color: var(--muted)
         }
 
-        /* 사용률 바 */
+        /* 사용률 바 + 상태 */
         .ratebar {
             height: 10px;
             background: #0d1219;
@@ -312,15 +312,6 @@
             width: 0%
         }
 
-        .warn-row {
-            background: #1b1510;
-            color: #ffdca3;
-            border: 1px dashed #3a2c0e;
-            padding: 6px 8px;
-            border-radius: 8px
-        }
-
-        /* 상태 강조 */
         .tag {
             display: inline-flex;
             align-items: center;
@@ -348,6 +339,20 @@
         .over td {
             background: #221419 !important
         }
+
+        /* 사업별 카드 컨테이너 */
+        #program-summaries {
+            display: flex;
+            flex-direction: column;
+            gap: 16px
+        }
+
+        .prog-card .headrow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px
+        }
     </style>
 </head>
 
@@ -373,7 +378,7 @@
         <section class="card section" aria-label="예산 사용 입력">
             <div class="title">
                 <h3>예산 사용 입력</h3>
-                <div class="sub">항목은 설정 탭의 예산 계획을 기준으로 표시됩니다. 필요 시 ‘직접입력’을 선택해 입력할 수 있습니다.</div>
+                <div class="sub">항목은 설정 탭의 예산 계획 기반. 필요하면 ‘직접입력’ 선택.</div>
             </div>
             <div class="toolbar" id="input-bar">
                 <div class="field" style="min-width:160px">
@@ -412,7 +417,7 @@
             <div id="plan-hint" class="sub" style="margin-top:-4px"></div>
         </section>
 
-        <!-- 보기 필터 -->
+        <!-- 보기 필터 (요약/월표/로그에 적용) -->
         <section class="card section" aria-label="보기 필터">
             <div class="title">
                 <h3>보기 필터</h3>
@@ -431,7 +436,7 @@
                     <select id="f-a2"></select>
                 </div>
                 <div class="field">
-                    <label for="f-ym">연·월</label>
+                    <label for="f-ym">연·월(요약/월표)</label>
                     <input id="f-ym" type="month" />
                 </div>
                 <div class="field">
@@ -444,34 +449,13 @@
             </div>
         </section>
 
-        <!-- 활동/항목별 요약 -->
-        <section class="section" aria-label="활동/항목별 요약">
+        <!-- 사업별 예산 요약: 프로그램마다 개별 테이블 생성 -->
+        <section class="section" aria-label="사업별 예산 요약">
             <div class="title">
-                <h3>활동·항목별 예산 요약</h3>
-                <div class="sub">사용률 = 사용 / 계획. 계획이 없는데 사용이 있으면 ‘비계획’으로 표시합니다.</div>
+                <h3>사업별 예산 요약</h3>
+                <div class="sub">사용률 = 사용/계획. 계획이 없는데 사용이 있으면 ‘비계획’ 처리.</div>
             </div>
-            <div class="twrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="min-width:280px">사업 · 활동 · 항목</th>
-                            <th class="right">계획(원)</th>
-                            <th class="right">사용(원)</th>
-                            <th class="right">잔여(원)</th>
-                            <th class="right">사용률</th>
-                            <th style="min-width:140px">진행바</th>
-                            <th class="center">상태</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tb-summary">
-                        <tr>
-                            <td colspan="7">
-                                <div class="empty">데이터가 없습니다.</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <div id="program-summaries"></div>
         </section>
 
         <!-- 월별 합계 -->
@@ -492,34 +476,6 @@
                         <tr>
                             <td colspan="2">
                                 <div class="empty">해당 월 데이터가 없습니다.</div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- 분기별 합계 -->
-        <section class="section" aria-label="분기별 합계">
-            <div class="title">
-                <h3>분기별 합계 <span class="pill" id="label-year">-</span></h3>
-                <div class="sub">분기별 사용금액(원)</div>
-            </div>
-            <div class="twrap">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>사업명</th>
-                            <th class="right">Q1</th>
-                            <th class="right">Q2</th>
-                            <th class="right">Q3</th>
-                            <th class="right">Q4</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tb-quarter">
-                        <tr>
-                            <td colspan="5">
-                                <div class="empty">해당 연도 데이터가 없습니다.</div>
                             </td>
                         </tr>
                     </tbody>
@@ -563,12 +519,11 @@
 
     <script>
         /* ===== 상태 (홈/실적과 공유) ===== */
-        const LS_KEY = 'swms_home_v1'; // 홈과 동일 키 사용 :contentReference[oaicite:2]{index=2}
+        const LS_KEY = 'swms_home_v1';
         const EMPTY_STATE = Object.freeze({
             settings: { programs: [], activities: [], budgets: [], schedules: [] },
             performanceLogs: [], budgetLogs: []
         });
-
         function loadState() { try { const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : structuredClone(EMPTY_STATE); } catch (e) { return structuredClone(EMPTY_STATE); } }
         function saveState(s) { localStorage.setItem(LS_KEY, JSON.stringify(s)); }
 
@@ -577,7 +532,6 @@
         const pad = n => String(n).padStart(2, '0');
         const fmtDate = d => { const T = d instanceof Date ? d : new Date(d); return `${T.getFullYear()}-${pad(T.getMonth() + 1)}-${pad(T.getDate())}`; }
         const ymFrom = d => { const T = d instanceof Date ? d : new Date(d); return `${T.getFullYear()}-${pad(T.getMonth() + 1)}`; }
-        const quarterOf = d => Math.ceil((d.getMonth() + 1) / 3);
         const sumBy = (arr, sel) => arr.reduce((s, x) => s + (+sel(x) || 0), 0);
         const $ = q => document.querySelector(q);
 
@@ -586,25 +540,12 @@
         let editingId = null;
 
         /* ===== 폼 DOM ===== */
-        const inDate = $('#in-date');
-        const inProgram = $('#in-program');
-        const inA1 = $('#in-a1');
-        const inA2 = $('#in-a2');
-        const inItem = $('#in-item');
-        const inItemText = $('#in-item-text');
-        const customItemWrap = $('#custom-item-wrap');
-        const inAmount = $('#in-amount');
-        const btnAdd = $('#btn-add');
-        const btnCancel = $('#btn-cancel');
-        const planHint = $('#plan-hint');
+        const inDate = $('#in-date'), inProgram = $('#in-program'), inA1 = $('#in-a1'), inA2 = $('#in-a2');
+        const inItem = $('#in-item'), inItemText = $('#in-item-text'), customItemWrap = $('#custom-item-wrap');
+        const inAmount = $('#in-amount'), btnAdd = $('#btn-add'), btnCancel = $('#btn-cancel'), planHint = $('#plan-hint');
 
         /* ===== 필터 DOM ===== */
-        const fProgram = $('#f-program');
-        const fA1 = $('#f-a1');
-        const fA2 = $('#f-a2');
-        const fYM = $('#f-ym');
-        const fYear = $('#f-year');
-        const btnResetFilter = $('#btn-reset-filter');
+        const fProgram = $('#f-program'), fA1 = $('#f-a1'), fA2 = $('#f-a2'), fYM = $('#f-ym'), fYear = $('#f-year'), btnResetFilter = $('#btn-reset-filter');
 
         /* ===== 옵션 채우기 ===== */
         function fillProgramOptions(selectEl, withAll = false) {
@@ -630,10 +571,7 @@
             const items = [...new Set(state.settings.budgets
                 .filter(b => b.programId === programId && b.a1 === a1 && (b.a2 || '') === (a2 || ''))
                 .map(b => b.item))];
-            if (items.length === 0) {
-                if (allowCustom) { selectEl.append(new Option('직접입력', '__custom__')); }
-                return;
-            }
+            if (items.length === 0) { if (allowCustom) selectEl.append(new Option('직접입력', '__custom__')); return; }
             items.forEach(it => selectEl.append(new Option(it, it)));
             if (allowCustom) selectEl.append(new Option('직접입력', '__custom__'));
         }
@@ -644,7 +582,7 @@
             if (plans.length === 0) { planHint.textContent = '이 활동에 등록된 계획 예산이 없습니다. 입력 시 비계획 지출로 처리됩니다.'; return; }
             const totalPlan = sumBy(plans, b => b.planned || 0);
             const used = sumBy(state.budgetLogs.filter(l => l.programId === pid && l.a1 === a1 && (l.a2 || '') === a2), l => l.amount || 0);
-            planHint.textContent = `해당 활동 계획 합계: ${totalPlan.toLocaleString()}원 · 현재 사용: ${used.toLocaleString()}원`;
+            planHint.textContent = `계획 합계: ${totalPlan.toLocaleString()}원 · 현재 사용: ${used.toLocaleString()}원`;
         }
 
         /* ===== 초기화 ===== */
@@ -661,19 +599,16 @@
                 fillA1Options(inA1, inProgram.value, false);
                 fillA2Options(inA2, inProgram.value, inA1.value, false, '없음');
                 fillItemOptions(inItem, inProgram.value, inA1.value, inA2.value || '', true);
-                toggleCustomItem();
-                showPlanHint();
+                toggleCustomItem(); showPlanHint();
             });
             inA1.addEventListener('change', () => {
                 fillA2Options(inA2, inProgram.value, inA1.value, false, '없음');
                 fillItemOptions(inItem, inProgram.value, inA1.value, inA2.value || '', true);
-                toggleCustomItem();
-                showPlanHint();
+                toggleCustomItem(); showPlanHint();
             });
             inA2.addEventListener('change', () => {
                 fillItemOptions(inItem, inProgram.value, inA1.value, inA2.value || '', true);
-                toggleCustomItem();
-                showPlanHint();
+                toggleCustomItem(); showPlanHint();
             });
             inItem.addEventListener('change', toggleCustomItem);
 
@@ -682,11 +617,7 @@
 
             showPlanHint();
         }
-
-        function toggleCustomItem() {
-            const custom = inItem.value === '__custom__';
-            customItemWrap.style.display = custom ? 'flex' : 'none';
-        }
+        function toggleCustomItem() { const custom = inItem.value === '__custom__'; customItemWrap.style.display = custom ? 'flex' : 'none'; }
 
         function initFilter() {
             fillProgramOptions(fProgram, true);
@@ -722,48 +653,27 @@
 
         /* ===== 제출/편집 ===== */
         function onSubmit() {
-            const date = inDate.value;
-            const programId = inProgram.value;
-            const a1 = inA1.value;
-            const a2 = inA2.value || null;
+            const date = inDate.value, programId = inProgram.value, a1 = inA1.value, a2 = inA2.value || null;
             const item = inItem.value === '__custom__' ? (inItemText.value || '').trim() : inItem.value;
             const amount = Math.max(0, parseInt(inAmount.value || '0', 10));
 
-            if (!date || !programId || !a1 || !item) {
-                alert('일자, 사업명, 세부활동1, 항목은 필수입니다.');
-                return;
-            }
-            if (!(amount > 0)) {
-                alert('사용금액을 1원 이상 입력하세요.');
-                return;
-            }
-            // 설정에 존재하는 활동 키 검증
+            if (!date || !programId || !a1 || !item) { alert('일자, 사업명, 세부활동1, 항목은 필수입니다.'); return; }
+            if (!(amount > 0)) { alert('사용금액을 1원 이상 입력하세요.'); return; }
+
             const existsAct = state.settings.activities.some(a => a.programId === programId && a.a1 === a1 && (a.a2 || null) === (a2 || null));
-            if (!existsAct) {
-                alert('설정 탭에 없는 활동입니다. 먼저 설정에서 등록하세요.');
-                return;
-            }
+            if (!existsAct) { alert('설정 탭에 없는 활동입니다. 먼저 설정에서 등록하세요.'); return; }
 
             if (editingId) {
                 const idx = state.budgetLogs.findIndex(l => l.id === editingId);
-                if (idx >= 0) {
-                    state.budgetLogs[idx] = { id: editingId, date, programId, a1, a2, item, amount };
-                    saveState(state); resetEditing(); refresh();
-                }
+                if (idx >= 0) { state.budgetLogs[idx] = { id: editingId, date, programId, a1, a2, item, amount }; saveState(state); resetEditing(); refresh(); }
             } else {
                 const id = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
                 state.budgetLogs.push({ id, date, programId, a1, a2, item, amount });
                 saveState(state); clearInputs(); refresh();
             }
         }
-        function clearInputs() {
-            inDate.value = fmtDate(today); inAmount.value = '';
-            inItemText.value = ''; editingId = null; btnAdd.textContent = '추가'; btnCancel.style.display = 'none';
-        }
-        function resetEditing() {
-            editingId = null; btnAdd.textContent = '추가'; btnCancel.style.display = 'none';
-            inAmount.value = ''; inItemText.value = '';
-        }
+        function clearInputs() { inDate.value = fmtDate(today); inAmount.value = ''; inItemText.value = ''; editingId = null; btnAdd.textContent = '추가'; btnCancel.style.display = 'none'; }
+        function resetEditing() { editingId = null; btnAdd.textContent = '추가'; btnCancel.style.display = 'none'; inAmount.value = ''; inItemText.value = ''; }
 
         /* ===== 필터 ===== */
         function currentFilters() {
@@ -786,19 +696,19 @@
             });
         }
 
-        /* ===== 룩업/파생 ===== */
+        /* ===== 룩업 ===== */
         function buildLookups() {
             const progById = new Map(state.settings.programs.map(p => [p.id, p]));
             const planByKey = new Map(); // key = pid|a1|a2|item
             state.settings.budgets.forEach(b => {
                 const key = [b.programId, b.a1, b.a2 || '', b.item].join('|');
-                const prev = planByKey.get(key) || 0;
-                planByKey.set(key, prev + (+b.planned || 0));
+                planByKey.set(key, (planByKey.get(key) || 0) + (+b.planned || 0));
             });
             return { progById, planByKey };
         }
 
-        function deriveSummaryRows() {
+        /* ===== 파생 (사업별 요약) ===== */
+        function deriveSummaryByProgram() {
             const { progById, planByKey } = buildLookups();
             const logs = applyLogFilter(state.budgetLogs);
             const usedByKey = new Map();
@@ -807,32 +717,45 @@
                 usedByKey.set(k, (usedByKey.get(k) || 0) + (+l.amount || 0));
             });
 
-            // 모든 키(계획 + 사용)를 합집합으로
+            // 프로그램별 묶음
+            const byProgram = new Map(); // pid -> rows[]
+            // 계획 키 + 사용 키 모두 반영
             const allKeys = new Set([...planByKey.keys(), ...usedByKey.keys()]);
-            const rows = [];
             allKeys.forEach(k => {
-                const [pid, a1, a2s, item] = k.split('|');
-                const a2 = a2s || null;
+                const [pid, a1, a2s, item] = k.split('|'); const a2 = a2s || null;
+                // 프로그램 필터가 있으면 그 프로그램만 유지
+                const pf = currentFilters().programId; if (pf && pid !== pf) return;
+                // 활동 필터도 적용
+                const f1 = currentFilters().a1, f2 = currentFilters().a2;
+                if (f1 && a1 !== f1) return; if (f2 && (a2 || '') !== f2) return;
+
                 const planned = planByKey.get(k) || 0;
                 const used = usedByKey.get(k) || 0;
                 const remaining = planned - used;
                 const rate = planned > 0 ? (used / planned) : null;
-                const status = planned === 0 && used > 0 ? '비계획' : (rate !== null && rate > 1 ? '초과' : (rate !== null && rate >= 0.8 ? '임계' : '정상'));
-                rows.push({
+                const status = planned === 0 && used > 0 ? '비계획' : (rate != null && rate > 1 ? '초과' : (rate != null && rate >= 0.8 ? '임계' : '정상'));
+                const row = {
                     pid, programName: (progById.get(pid)?.name || pid),
                     a1, a2, item, planned, used, remaining, rate, status
+                };
+                if (!byProgram.has(pid)) byProgram.set(pid, []);
+                byProgram.get(pid).push(row);
+            });
+
+            // 정렬
+            byProgram.forEach(list => {
+                list.sort((x, y) => {
+                    if (x.programName !== y.programName) return x.programName.localeCompare(y.programName, 'ko');
+                    if (x.a1 !== y.a1) return x.a1.localeCompare(y.a1, 'ko');
+                    if ((x.a2 || '') !== (y.a2 || '')) return (x.a2 || '').localeCompare(y.a2 || '', 'ko');
+                    return x.item.localeCompare(y.item, 'ko');
                 });
             });
 
-            rows.sort((x, y) => {
-                if (x.programName !== y.programName) return x.programName.localeCompare(y.programName, 'ko');
-                if (x.a1 !== y.a1) return x.a1.localeCompare(y.a1, 'ko');
-                if ((x.a2 || '') !== (y.a2 || '')) return (x.a2 || '').localeCompare(y.a2 || '', 'ko');
-                return x.item.localeCompare(y.item, 'ko');
-            });
-            return rows;
+            return { progById, byProgram };
         }
 
+        /* ===== 파생 (월합계) ===== */
         function deriveMonthly() {
             const ym = currentFilters().ym; $('#label-month').textContent = ym;
             const byProg = new Map();
@@ -842,77 +765,103 @@
             return state.settings.programs.map(p => ({ programName: p.name, amount: byProg.get(p.id) || 0 }));
         }
 
-        function deriveQuarter() {
-            const year = currentFilters().year; $('#label-year').textContent = String(year);
-            return state.settings.programs.map(p => {
-                const L = state.budgetLogs.filter(l => new Date(l.date).getFullYear() === year && l.programId === p.id);
-                const byQ = [1, 2, 3, 4].map(q => sumBy(L.filter(l => quarterOf(new Date(l.date)) === q), x => x.amount));
-                return { programName: p.name, byQ };
+        /* ===== 렌더: 사업별 요약(카드/테이블을 프로그램마다 생성) ===== */
+        function renderProgramSummaries() {
+            const host = document.getElementById('program-summaries');
+            host.innerHTML = '';
+            const { progById, byProgram } = deriveSummaryByProgram();
+
+            // 표시 대상 프로그램 목록(필터 없으면 전체, 있으면 해당만)
+            const targetProgramIds = (() => {
+                const pf = currentFilters().programId;
+                if (pf) return [pf];
+                return state.settings.programs.map(p => p.id);
+            })();
+
+            if (targetProgramIds.length === 0) {
+                host.appendChild(el('div', { class: 'empty' }, '설정된 사업이 없습니다.'));
+                return;
+            }
+
+            let hasAnyRow = false;
+            targetProgramIds.forEach(pid => {
+                const progName = progById.get(pid)?.name || (state.settings.programs.find(p => p.id === pid)?.name) || pid;
+                const list = byProgram.get(pid) || [];
+
+                // 카드
+                const card = el('section', { class: 'card prog-card', 'aria-label': `${progName} 요약` });
+                const head = el('div', { class: 'headrow' },
+                    el('h3', {}, progName),
+                    el('div', { class: 'sub' }, '표시는 현재 필터(연·월/활동)에 따라 달라집니다.')
+                );
+                card.appendChild(head);
+
+                // 테이블
+                const tw = el('div', { class: 'twrap' });
+                const table = el('table', {},
+                    el('thead', {}, el('tr', {},
+                        el('th', { style: 'min-width:280px' }, '활동 · 항목'),
+                        el('th', { class: 'right' }, '계획(원)'),
+                        el('th', { class: 'right' }, '사용(원)'),
+                        el('th', { class: 'right' }, '잔여(원)'),
+                        el('th', { class: 'right' }, '사용률'),
+                        el('th', { style: 'min-width:140px' }, '진행바'),
+                        el('th', { class: 'center' }, '상태')
+                    )),
+                    el('tbody', { id: `tb-sum-${pid}` })
+                );
+                tw.appendChild(table); card.appendChild(tw);
+                host.appendChild(card);
+
+                const tbody = table.querySelector('tbody');
+                if (list.length === 0) {
+                    tbody.appendChild(el('tr', {}, el('td', { colspan: '7' }, el('div', { class: 'empty' }, '데이터가 없습니다.'))));
+                } else {
+                    hasAnyRow = true;
+                    list.forEach(r => {
+                        const pct = r.rate == null ? 0 : Math.min(100, Math.max(0, r.rate * 100));
+                        const tr = el('tr', r.rate != null && r.rate > 1 ? { class: 'over' } : {},
+                            el('td', {}, `${r.a1}${r.a2 ? (' · ' + r.a2) : ''} · ${r.item}`),
+                            el('td', { class: 'right knum' }, r.planned.toLocaleString()),
+                            el('td', { class: 'right knum' }, r.used.toLocaleString()),
+                            el('td', { class: 'right knum' }, (r.remaining).toLocaleString()),
+                            el('td', { class: 'right knum' }, r.rate == null ? '-' : (Math.round(pct) + '%')),
+                            el('td', {}, el('div', { class: 'ratebar' }, el('i', { style: `width:${Math.round(pct)}%` }))),
+                            el('td', { class: 'center' },
+                                r.status === '비계획' ? el('span', { class: 'tag red' }, '비계획') :
+                                    r.status === '초과' ? el('span', { class: 'tag red' }, '초과') :
+                                        r.status === '임계' ? el('span', { class: 'tag yellow' }, '80%↑') :
+                                            el('span', { class: 'tag' }, '정상')
+                            )
+                        );
+                        tbody.appendChild(tr);
+                    });
+
+                    // 합계
+                    const planSum = sumBy(list, x => x.planned);
+                    const usedSum = sumBy(list, x => x.used);
+                    const remSum = planSum - usedSum;
+                    const rate = planSum > 0 ? usedSum / planSum : null;
+                    const pct = rate == null ? 0 : Math.min(100, Math.max(0, rate * 100));
+                    const trS = el('tr', {},
+                        el('td', {}, el('strong', {}, '합계')),
+                        el('td', { class: 'right knum' }, el('strong', {}, planSum.toLocaleString())),
+                        el('td', { class: 'right knum' }, el('strong', {}, usedSum.toLocaleString())),
+                        el('td', { class: 'right knum' }, el('strong', {}, remSum.toLocaleString())),
+                        el('td', { class: 'right knum' }, el('strong', {}, rate == null ? '-' : (Math.round(pct) + '%'))),
+                        el('td', {}, el('div', { class: 'ratebar' }, el('i', { style: `width:${Math.round(pct)}%` }))),
+                        el('td', {}, '')
+                    );
+                    tbody.appendChild(trS);
+                }
             });
+
+            if (!hasAnyRow) {
+                host.appendChild(el('div', { class: 'empty' }, '필터 조건에 해당하는 데이터가 없습니다.'));
+            }
         }
 
-        /* ===== 렌더 ===== */
-        function renderSummary() {
-            const tbody = $('#tb-summary');
-            const rows = deriveSummaryRows();
-            if (rows.length === 0) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty">데이터가 없습니다.</div></td></tr>`; return; }
-            tbody.innerHTML = '';
-
-            // 프로그램 단위 소계 출력을 위해 그룹화
-            const groups = new Map();
-            rows.forEach(r => {
-                const key = r.programName;
-                if (!groups.has(key)) groups.set(key, []);
-                groups.get(key).push(r);
-            });
-
-            groups.forEach((list, programName) => {
-                // 프로그램 헤더(가독성)
-                const trH = document.createElement('tr');
-                trH.innerHTML = `<td colspan="7" class="muted" style="background:#10151d"><strong>${programName}</strong></td>`;
-                tbody.appendChild(trH);
-
-                // 상세 행
-                list.forEach(r => {
-                    const pct = r.rate == null ? 0 : Math.min(100, Math.max(0, r.rate * 100));
-                    const tr = document.createElement('tr');
-                    if (r.rate != null && r.rate > 1) tr.classList.add('over');
-                    tr.innerHTML = `
-            <td>${r.a1}${r.a2 ? (' · ' + r.a2) : ''} · ${r.item}</td>
-            <td class="right knum">${r.planned.toLocaleString()}</td>
-            <td class="right knum">${r.used.toLocaleString()}</td>
-            <td class="right knum">${(r.remaining).toLocaleString()}</td>
-            <td class="right knum">${r.rate == null ? '-' : (pct.toFixed(0) + '%')}</td>
-            <td><div class="ratebar"><i style="width:${pct.toFixed(0)}%"></i></div></td>
-            <td class="center">${r.status === '비계획' ? '<span class="tag red">비계획</span>' :
-                            r.status === '초과' ? '<span class="tag red">초과</span>' :
-                                r.status === '임계' ? '<span class="tag yellow">80%↑</span>' :
-                                    '<span class="tag">정상</span>'
-                        }</td>
-          `;
-                    tbody.appendChild(tr);
-                });
-
-                // 소계
-                const planSum = sumBy(list, x => x.planned);
-                const usedSum = sumBy(list, x => x.used);
-                const remSum = planSum - usedSum;
-                const rate = planSum > 0 ? usedSum / planSum : null;
-                const pct = rate == null ? 0 : Math.min(100, Math.max(0, rate * 100));
-                const trS = document.createElement('tr');
-                trS.innerHTML = `
-          <td><strong>합계</strong></td>
-          <td class="right knum"><strong>${planSum.toLocaleString()}</strong></td>
-          <td class="right knum"><strong>${usedSum.toLocaleString()}</strong></td>
-          <td class="right knum"><strong>${remSum.toLocaleString()}</strong></td>
-          <td class="right knum"><strong>${rate == null ? '-' : (pct.toFixed(0) + '%')}</strong></td>
-          <td><div class="ratebar"><i style="width:${pct.toFixed(0)}%"></i></div></td>
-          <td></td>
-        `;
-                tbody.appendChild(trS);
-            });
-        }
-
+        /* ===== 렌더: 월합계 & 로그 ===== */
         function renderMonth() {
             const tbody = $('#tb-month');
             const rows = deriveMonthly();
@@ -926,27 +875,6 @@
                 tbody.appendChild(tr);
             });
         }
-
-        function renderQuarter() {
-            const tbody = $('#tb-quarter');
-            const rows = deriveQuarter();
-            if (rows.every(r => r.byQ.every(v => v === 0))) {
-                tbody.innerHTML = `<tr><td colspan="5"><div class="empty">해당 연도 데이터가 없습니다.</div></td></tr>`; return;
-            }
-            tbody.innerHTML = '';
-            rows.forEach(r => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-          <td>${r.programName}</td>
-          <td class="right knum">${r.byQ[0].toLocaleString()}</td>
-          <td class="right knum">${r.byQ[1].toLocaleString()}</td>
-          <td class="right knum">${r.byQ[2].toLocaleString()}</td>
-          <td class="right knum">${r.byQ[3].toLocaleString()}</td>
-        `;
-                tbody.appendChild(tr);
-            });
-        }
-
         function renderLogs() {
             const tbody = $('#tb-logs');
             const logs = applyLogFilter(state.budgetLogs).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -980,13 +908,9 @@
                     fillA1Options(inA1, row.programId, false); inA1.value = row.a1;
                     fillA2Options(inA2, row.programId, row.a1, false, '없음'); inA2.value = row.a2 || '';
                     fillItemOptions(inItem, row.programId, row.a1, row.a2 || '', true);
-                    // 선택지에 없는 항목이면 커스텀으로
                     const items = [...inItem.options].map(o => o.value);
-                    if (!items.includes(row.item)) {
-                        inItem.value = '__custom__'; toggleCustomItem(); inItemText.value = row.item;
-                    } else {
-                        inItem.value = row.item; toggleCustomItem(); inItemText.value = '';
-                    }
+                    if (!items.includes(row.item)) { inItem.value = '__custom__'; toggleCustomItem(); inItemText.value = row.item; }
+                    else { inItem.value = row.item; toggleCustomItem(); inItemText.value = ''; }
                     inAmount.value = row.amount;
                     btnAdd.textContent = '저장'; btnCancel.style.display = 'inline-flex';
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1012,10 +936,7 @@
                 .map(l => [
                     fmtDate(l.date),
                     (progById.get(l.programId) || l.programId),
-                    l.a1,
-                    l.a2 || '',
-                    l.item,
-                    (+l.amount || 0)
+                    l.a1, l.a2 || '', l.item, (+l.amount || 0)
                 ]);
             const csv = [header, ...rows].map(r => r.map(x => {
                 const s = String(x); return /[,"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
@@ -1026,17 +947,32 @@
             URL.revokeObjectURL(url);
         }
 
-        /* ===== 리프레시 & 초기 바인딩 ===== */
-        function refresh() {
-            // 필터 종속 보정
-            if (fProgram.value) fillA1Options(fA1, fProgram.value, true);
-            if (fProgram.value || fA1.value) fillA2Options(fA2, fProgram.value, fA1.value || '', true, '전체');
-            renderSummary(); renderMonth(); renderQuarter(); renderLogs();
+        /* ===== 도우미: 엘리먼트 생성 ===== */
+        function el(tag, attrs = {}, ...children) {
+            const E = document.createElement(tag);
+            Object.entries(attrs || {}).forEach(([k, v]) => E.setAttribute(k, v));
+            children.flat().forEach(c => {
+                if (c == null) return;
+                if (c instanceof Node) E.appendChild(c);
+                else E.appendChild(document.createTextNode(String(c)));
+            });
+            return E;
         }
 
-        initForm();
-        initFilter();
-        $('#btn-export').addEventListener('click', exportCSV);
+        /* ===== 리프레시 & 초기 바인딩 ===== */
+        function refresh() {
+            renderProgramSummaries();
+            renderMonth();
+            renderLogs();
+        }
+
+        function init() {
+            initForm();
+            initFilter();
+            document.getElementById('btn-export').addEventListener('click', exportCSV);
+            refresh();
+        }
+        init();
 
         // 개발 편의
         window.__swms = {
@@ -1044,8 +980,6 @@
             save: (s) => saveState(s),
             reset: () => { localStorage.setItem(LS_KEY, JSON.stringify(EMPTY_STATE)); location.reload(); }
         };
-
-        refresh();
     </script>
 </body>
 
