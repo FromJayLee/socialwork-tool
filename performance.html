@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>사회복지사 업무 관리 시스템 · 사업 실적</title>
+
+    <!-- 필기체 로고 폰트 (홈과 동일) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== 홈 파일과 동일한 토큰/레이아웃 ===== */
+        :root {
+            --bg: #0c0f13;
+            --card: #151a22;
+            --text: #e9edf2;
+            --muted: #9aa3af;
+            --line: #202633;
+            --accent: #4da3ff;
+            --accent-2: #77dd77;
+            --danger: #ff5a5a;
+            --chip: #1e2430;
+            --radius: 16px;
+            --gap: 16px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Apple SD Gothic Neo, "Noto Sans KR", Pretendard, system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: saturate(180%) blur(12px);
+            background: linear-gradient(180deg, rgba(12, 15, 19, 0.9), rgba(12, 15, 19, 0.6));
+            border-bottom: 1px solid var(--line);
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .logo-mark {
+            font-family: 'Pacifico', system-ui, cursive;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: .2px;
+            color: var(--text);
+            text-shadow: 0 2px 12px rgba(77, 163, 255, .25);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .tab {
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: var(--muted);
+            border: 1px solid transparent;
+            transition: .2s
+        }
+
+        .tab:hover {
+            color: var(--text);
+            background: var(--chip);
+            border-color: var(--line)
+        }
+
+        .tab.active {
+            color: var(--text);
+            background: #1a2230;
+            border-color: #223148
+        }
+
+        .icon-btn {
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: var(--chip);
+            border: 1px solid var(--line)
+        }
+
+        main {
+            padding: 24px 0 56px
+        }
+
+        /* 공통 카드/텍스트 */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 16px
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #f2f6fb;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .sub {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: var(--chip);
+            color: var(--muted);
+            font-size: 12px;
+            border: 1px solid var(--line)
+        }
+
+        .empty {
+            padding: 10px;
+            border: 1px dashed var(--line);
+            border-radius: 12px;
+            color: var(--muted);
+            background: #10151a
+        }
+
+        .knum {
+            font-variant-numeric: tabular-nums
+        }
+
+        /* 이 페이지 전용 레이아웃 */
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-between
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 140px
+        }
+
+        .field label {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        input[type="date"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #10151d;
+            border: 1px solid var(--line);
+            color: var(--text)
+        }
+
+        input[type="number"] {
+            appearance: textfield
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            margin: 0;
+            -webkit-appearance: none
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #223148;
+            background: #162031;
+            color: var(--text);
+            cursor: pointer
+        }
+
+        .btn.ghost {
+            background: #10151d;
+            border-color: var(--line);
+            color: var(--muted)
+        }
+
+        .btn.warn {
+            background: #3a1c1c;
+            border-color: #4a2525
+        }
+
+        .btn:disabled {
+            opacity: .6;
+            cursor: not-allowed
+        }
+
+        /* 테이블 */
+        .twrap {
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: 12px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 760px
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--line);
+            text-align: left
+        }
+
+        th {
+            color: #e9edf2;
+            background: #121821;
+            position: sticky;
+            top: 0
+        }
+
+        tr:hover td {
+            background: #111722
+        }
+
+        .right {
+            text-align: right
+        }
+
+        .center {
+            text-align: center
+        }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        /* 달성률 바 */
+        .ratebar {
+            height: 10px;
+            background: #0d1219;
+            border: 1px solid #1b2330;
+            border-radius: 999px;
+            overflow: hidden
+        }
+
+        .ratebar>i {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), #7fc1ff);
+            width: 0%
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="wrap head">
+            <div class="logo">
+                <div class="logo-mark" aria-label="사회복지사 업무 관리 시스템">사회복지사 업무 관리 시스템</div>
+            </div>
+            <nav aria-label="주요 탭">
+                <a class="tab" href="./index.html">홈</a>
+                <a class="tab active" href="./performance.html" aria-current="page">사업 실적</a>
+                <a class="tab" href="./budget.html">사업 예산</a>
+                <a class="tab" href="./schedule.html">사업 일정</a>
+                <a class="tab" href="./settings.html">설정</a>
+                <span class="icon-btn" title="알림">🔔</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <!-- 실적 입력 -->
+        <section class="card section" aria-label="실적 입력">
+            <div class="title">
+                <h3>실적 입력</h3>
+                <div class="sub">세부활동2가 없으면 ‘없음’으로 처리됩니다.</div>
+            </div>
+            <div class="toolbar" id="input-bar">
+                <div class="field" style="min-width:160px">
+                    <label for="in-date">일자</label>
+                    <input id="in-date" type="date" />
+                </div>
+                <div class="field">
+                    <label for="in-program">사업명</label>
+                    <select id="in-program"></select>
+                </div>
+                <div class="field">
+                    <label for="in-a1">세부활동1</label>
+                    <select id="in-a1"></select>
+                </div>
+                <div class="field">
+                    <label for="in-a2">세부활동2(선택)</label>
+                    <select id="in-a2"></select>
+                </div>
+                <div class="field" style="min-width:120px">
+                    <label for="in-rec">수급 인원</label>
+                    <input id="in-rec" type="number" inputmode="numeric" min="0" step="1" placeholder="0" />
+                </div>
+                <div class="field" style="min-width:120px">
+                    <label for="in-gen">일반 인원</label>
+                    <input id="in-gen" type="number" inputmode="numeric" min="0" step="1" placeholder="0" />
+                </div>
+                <div style="margin-left:auto; display:flex; gap:8px; align-items:flex-end">
+                    <button id="btn-add" class="btn">추가</button>
+                    <button id="btn-cancel" class="btn ghost" style="display:none">취소</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 보기 필터 -->
+        <section class="card section" aria-label="보기 필터">
+            <div class="title">
+                <h3>보기 필터</h3>
+            </div>
+            <div class="toolbar">
+                <div class="field">
+                    <label for="f-program">사업명</label>
+                    <select id="f-program"></select>
+                </div>
+                <div class="field">
+                    <label for="f-a1">세부활동1</label>
+                    <select id="f-a1"></select>
+                </div>
+                <div class="field">
+                    <label for="f-ym">연·월</label>
+                    <input id="f-ym" type="month" />
+                </div>
+                <div class="field">
+                    <label for="f-year">연도(분기표)</label>
+                    <select id="f-year"></select>
+                </div>
+                <div style="display:flex; align-items:flex-end">
+                    <button id="btn-reset-filter" class="btn ghost">필터 초기화</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 활동별 요약 -->
+        <section class="section" aria-label="활동별 요약">
+            <div class="title">
+                <h3>활동별 요약</h3>
+                <div class="sub">달성률 = (회기 달성률 + 인원 달성률) / 2</div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width:240px">사업 · 활동</th>
+                            <th class="center">목표 회기</th>
+                            <th class="center">실제 회기</th>
+                            <th class="right">목표 인원</th>
+                            <th class="right">실제 합계</th>
+                            <th class="right muted">수급</th>
+                            <th class="right muted">일반</th>
+                            <th class="right">달성률</th>
+                            <th style="min-width:140px">진행바</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-activity">
+                        <tr>
+                            <td colspan="9">
+                                <div class="empty">설정된 활동이 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 월별 합계 -->
+        <section class="section" aria-label="월별 합계">
+            <div class="title">
+                <h3>월별 합계 <span class="pill" id="label-month">-</span></h3>
+                <div class="sub">선택 연·월 기준</div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>사업명</th>
+                            <th class="center">회기</th>
+                            <th class="right muted">수급</th>
+                            <th class="right muted">일반</th>
+                            <th class="right">총인원</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-month">
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty">해당 월 데이터가 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 분기별 합계 -->
+        <section class="section" aria-label="분기별 합계">
+            <div class="title">
+                <h3>분기별 합계 <span class="pill" id="label-year">-</span></h3>
+                <div class="sub">회기 · 총인원만 표시</div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>사업명</th>
+                            <th class="center">Q1 회기</th>
+                            <th class="right">Q1 인원</th>
+                            <th class="center">Q2 회기</th>
+                            <th class="right">Q2 인원</th>
+                            <th class="center">Q3 회기</th>
+                            <th class="right">Q3 인원</th>
+                            <th class="center">Q4 회기</th>
+                            <th class="right">Q4 인원</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-quarter">
+                        <tr>
+                            <td colspan="9">
+                                <div class="empty">해당 연도 데이터가 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 입력 로그 -->
+        <section class="section" aria-label="입력 로그">
+            <div class="title">
+                <h3>입력 로그</h3>
+                <div style="display:flex; gap:8px; align-items:center">
+                    <span class="sub">최근순</span>
+                    <button id="btn-export" class="btn ghost">CSV 내보내기</button>
+                </div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width:120px">일자</th>
+                            <th>사업명</th>
+                            <th>세부활동1</th>
+                            <th>세부활동2</th>
+                            <th class="right muted">수급</th>
+                            <th class="right muted">일반</th>
+                            <th class="right">합계</th>
+                            <th class="center" style="min-width:140px">수정</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-logs">
+                        <tr>
+                            <td colspan="8">
+                                <div class="empty">입력된 로그가 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        /* ===== 상태 (홈 파일 구조와 동일) ===== */
+        const LS_KEY = 'swms_home_v1'; // 홈과 공유
+        const EMPTY_STATE = Object.freeze({
+            settings: { programs: [], activities: [], budgets: [], schedules: [] },
+            performanceLogs: [],
+            budgetLogs: []
+        });
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(LS_KEY);
+                return raw ? JSON.parse(raw) : structuredClone(EMPTY_STATE);
+            } catch (e) {
+                return structuredClone(EMPTY_STATE);
+            }
+        }
+        function saveState(s) { localStorage.setItem(LS_KEY, JSON.stringify(s)); }
+
+        /* ===== 유틸 ===== */
+        const today = new Date();
+        const pad = (n) => String(n).padStart(2, '0');
+        const fmtDate = (d) => { const T = d instanceof Date ? d : new Date(d); return `${T.getFullYear()}-${pad(T.getMonth() + 1)}-${pad(T.getDate())}`; };
+        const ymFrom = (d) => { const T = d instanceof Date ? d : new Date(d); return `${T.getFullYear()}-${pad(T.getMonth() + 1)}`; };
+        const quarterOf = (d) => Math.ceil((d.getMonth() + 1) / 3);
+        const sumBy = (arr, sel) => arr.reduce((s, x) => s + (+sel(x) || 0), 0);
+
+        const $ = (q) => document.querySelector(q);
+
+        /* ===== 전역 ===== */
+        let state = loadState();
+        let editingId = null;
+
+        /* ===== 폼 DOM ===== */
+        const inDate = $('#in-date');
+        const inProgram = $('#in-program');
+        const inA1 = $('#in-a1');
+        const inA2 = $('#in-a2');
+        const inRec = $('#in-rec');
+        const inGen = $('#in-gen');
+        const btnAdd = $('#btn-add');
+        const btnCancel = $('#btn-cancel');
+
+        /* ===== 필터 DOM ===== */
+        const fProgram = $('#f-program');
+        const fA1 = $('#f-a1');
+        const fYM = $('#f-ym');
+        const fYear = $('#f-year');
+        const btnResetFilter = $('#btn-reset-filter');
+
+        /* ===== 옵션 채우기 ===== */
+        function fillProgramOptions(selectEl, withAll = false) {
+            selectEl.innerHTML = '';
+            if (withAll) selectEl.append(new Option('전체', ''));
+            state.settings.programs.forEach(p => selectEl.append(new Option(p.name, p.id)));
+        }
+        function fillA1Options(selectEl, programId, withAll = false) {
+            selectEl.innerHTML = '';
+            if (withAll) selectEl.append(new Option('전체', ''));
+            if (!programId) return;
+            const uniq = [...new Set(state.settings.activities.filter(a => a.programId === programId).map(a => a.a1))];
+            uniq.forEach(a1 => selectEl.append(new Option(a1, a1)));
+        }
+        function fillA2Options(selectEl, programId, a1, allowEmptyLabel = '없음') {
+            selectEl.innerHTML = '';
+            if (!programId || !a1) { selectEl.append(new Option(allowEmptyLabel, '')); return; }
+            const list = state.settings.activities.filter(a => a.programId === programId && a.a1 === a1).map(a => a.a2);
+            const uniq = [...new Set(list)];
+            selectEl.append(new Option(allowEmptyLabel, '')); // 선택 안 함
+            uniq.filter(v => v != null).forEach(a2 => selectEl.append(new Option(a2, a2)));
+        }
+
+        /* ===== 초기화 ===== */
+        function initForm() {
+            inDate.value = fmtDate(today);
+            fillProgramOptions(inProgram, false);
+            const pid = inProgram.value || state.settings.programs[0]?.id || '';
+            fillA1Options(inA1, pid, false);
+            fillA2Options(inA2, pid, inA1.value, '없음');
+
+            inProgram.addEventListener('change', () => {
+                fillA1Options(inA1, inProgram.value, false);
+                fillA2Options(inA2, inProgram.value, inA1.value, '없음');
+            });
+            inA1.addEventListener('change', () => {
+                fillA2Options(inA2, inProgram.value, inA1.value, '없음');
+            });
+
+            btnAdd.addEventListener('click', onSubmit);
+            btnCancel.addEventListener('click', resetEditing);
+        }
+
+        function initFilter() {
+            fillProgramOptions(fProgram, true);
+            fillA1Options(fA1, fProgram.value, true);
+            fYM.value = ymFrom(today);
+            fillYears();
+            fYear.value = String(today.getFullYear());
+
+            fProgram.addEventListener('change', () => { fillA1Options(fA1, fProgram.value, true); refresh(); });
+            fA1.addEventListener('change', refresh);
+            fYM.addEventListener('change', refresh);
+            fYear.addEventListener('change', refresh);
+            btnResetFilter.addEventListener('click', () => {
+                fProgram.value = '';
+                fillA1Options(fA1, '', true);
+                fA1.value = '';
+                fYM.value = ymFrom(today);
+                fYear.value = String(today.getFullYear());
+                refresh();
+            });
+        }
+        function fillYears() {
+            const years = new Set(state.performanceLogs.map(l => new Date(l.date).getFullYear()));
+            if (years.size === 0) years.add(today.getFullYear());
+            fYear.innerHTML = '';
+            [...years].sort((a, b) => a - b).forEach(y => fYear.append(new Option(String(y), String(y))));
+        }
+
+        /* ===== 제출/편집 ===== */
+        function onSubmit() {
+            const date = inDate.value;
+            const programId = inProgram.value;
+            const a1 = inA1.value;
+            const a2 = inA2.value || null;
+            const recipients = Math.max(0, parseInt(inRec.value || '0', 10));
+            const general = Math.max(0, parseInt(inGen.value || '0', 10));
+
+            if (!date || !programId || !a1) {
+                alert('일자, 사업명, 세부활동1은 필수입니다.');
+                return;
+            }
+            // 설정에 존재하는 키인지 검증
+            const exists = state.settings.activities.some(a =>
+                a.programId === programId && a.a1 === a1 && (a.a2 || null) === (a2 || null)
+            );
+            if (!exists) {
+                alert('설정 탭에 없는 활동입니다. 먼저 설정에서 등록하세요.');
+                return;
+            }
+
+            if (editingId) {
+                const idx = state.performanceLogs.findIndex(l => l.id === editingId);
+                if (idx >= 0) {
+                    state.performanceLogs[idx] = { id: editingId, date, programId, a1, a2, recipients, general };
+                    saveState(state);
+                    resetEditing();
+                    refresh();
+                }
+            } else {
+                const id = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+                state.performanceLogs.push({ id, date, programId, a1, a2, recipients, general });
+                saveState(state);
+                clearInputs();
+                refresh();
+            }
+        }
+        function clearInputs() {
+            inDate.value = fmtDate(today);
+            inRec.value = '';
+            inGen.value = '';
+            editingId = null;
+            btnAdd.textContent = '추가';
+            btnCancel.style.display = 'none';
+        }
+        function resetEditing() {
+            editingId = null;
+            btnAdd.textContent = '추가';
+            btnCancel.style.display = 'none';
+            inRec.value = '';
+            inGen.value = '';
+        }
+
+        /* ===== 필터 적용 ===== */
+        function currentFilters() {
+            return {
+                programId: fProgram.value || '',
+                a1: fA1.value || '',
+                ym: fYM.value || ymFrom(today),
+                year: parseInt(fYear.value || String(today.getFullYear()), 10)
+            };
+        }
+        function applyLogFilter(logs) {
+            const { programId, a1, ym } = currentFilters();
+            return logs.filter(l => {
+                if (programId && l.programId !== programId) return false;
+                if (a1 && l.a1 !== a1) return false;
+                if (ym && ymFrom(l.date) !== ym) return false;
+                return true;
+            });
+        }
+
+        /* ===== 파생 계산 ===== */
+        function buildLookups() {
+            const progById = new Map(state.settings.programs.map(p => [p.id, p]));
+            const targetByKey = new Map(); // key = programId|a1|a2|''
+            state.settings.activities.forEach(a => {
+                const key = [a.programId, a.a1, a.a2 || ''].join('|');
+                const prev = targetByKey.get(key) || { targetSessions: 0, targetParticipants: 0 };
+                targetByKey.set(key, {
+                    targetSessions: prev.targetSessions + (a.targetSessions || 0),
+                    targetParticipants: prev.targetParticipants + (a.targetParticipants || 0)
+                });
+            });
+            return { progById, targetByKey };
+        }
+
+        function deriveActivityRows() {
+            const { progById, targetByKey } = buildLookups();
+            const logs = applyLogFilter(state.performanceLogs);
+            const group = new Map();
+            logs.forEach(l => {
+                const k = [l.programId, l.a1, l.a2 || ''].join('|');
+                if (!group.has(k)) group.set(k, []);
+                group.get(k).push(l);
+            });
+
+            const allKeys = new Set([...targetByKey.keys(), ...group.keys()]);
+            const rows = [];
+            allKeys.forEach(key => {
+                const [programId, a1, a2str] = key.split('|');
+                const a2 = a2str || null;
+                const L = group.get(key) || [];
+                const sessionsActual = L.length;
+                const recipients = sumBy(L, x => x.recipients);
+                const general = sumBy(L, x => x.general);
+                const total = recipients + general;
+
+                const tgt = targetByKey.get(key) || { targetSessions: 0, targetParticipants: 0 };
+                const sRate = tgt.targetSessions > 0 ? sessionsActual / tgt.targetSessions : null;
+                const pRate = tgt.targetParticipants > 0 ? total / tgt.targetParticipants : null;
+                let rate = null;
+                if (sRate !== null && pRate !== null) rate = (sRate + pRate) / 2;
+                else if (sRate !== null) rate = sRate;
+                else if (pRate !== null) rate = pRate;
+                else if (L.length > 0) rate = 1;
+
+                rows.push({
+                    programId, programName: (progById.get(programId)?.name || programId),
+                    a1, a2,
+                    tSessions: tgt.targetSessions || 0,
+                    aSessions: sessionsActual,
+                    tParticipants: tgt.targetParticipants || 0,
+                    recipients, general, total,
+                    rate
+                });
+            });
+
+            rows.sort((x, y) => {
+                if (x.programName !== y.programName) return x.programName.localeCompare(y.programName, 'ko');
+                if (x.a1 !== y.a1) return x.a1.localeCompare(y.a1, 'ko');
+                return (x.a2 || '').localeCompare(y.a2 || '', 'ko');
+            });
+            return rows;
+        }
+
+        function deriveMonthly() {
+            const ym = currentFilters().ym;
+            $('#label-month').textContent = ym;
+            const logs = state.performanceLogs.filter(l => ymFrom(l.date) === ym);
+            const byProg = new Map();
+            logs.forEach(l => {
+                if (!byProg.has(l.programId)) byProg.set(l.programId, []);
+                byProg.get(l.programId).push(l);
+            });
+            return state.settings.programs.map(p => {
+                const L = byProg.get(p.id) || [];
+                return {
+                    programName: p.name,
+                    sessions: L.length,
+                    recipients: sumBy(L, x => x.recipients),
+                    general: sumBy(L, x => x.general),
+                    total: sumBy(L, x => (+x.recipients || 0) + (+x.general || 0))
+                };
+            });
+        }
+
+        function deriveQuarter() {
+            const year = currentFilters().year;
+            $('#label-year').textContent = String(year);
+            return state.settings.programs.map(p => {
+                const L = state.performanceLogs.filter(l => new Date(l.date).getFullYear() === year && l.programId === p.id);
+                const byQ = [1, 2, 3, 4].map(q => {
+                    const list = L.filter(l => quarterOf(new Date(l.date)) === q);
+                    return {
+                        sessions: list.length,
+                        total: sumBy(list, x => (+x.recipients || 0) + (+x.general || 0))
+                    };
+                });
+                return { programName: p.name, byQ };
+            });
+        }
+
+        /* ===== 렌더 ===== */
+        function renderActivity() {
+            const tbody = $('#tb-activity');
+            const rows = deriveActivityRows();
+            if (rows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9"><div class="empty">설정된 활동이 없습니다.</div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = '';
+            rows.forEach(r => {
+                const pct = r.rate == null ? 0 : Math.min(100, Math.max(0, r.rate * 100));
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+          <td>${r.programName} · ${r.a1}${r.a2 ? (' · ' + r.a2) : ''}</td>
+          <td class="center knum">${r.tSessions}</td>
+          <td class="center knum">${r.aSessions}</td>
+          <td class="right knum">${(r.tParticipants || 0).toLocaleString()}</td>
+          <td class="right knum">${r.total.toLocaleString()}</td>
+          <td class="right knum muted">${r.recipients.toLocaleString()}</td>
+          <td class="right knum muted">${r.general.toLocaleString()}</td>
+          <td class="right knum">${r.rate == null ? '-' : pct.toFixed(0) + '%'}</td>
+          <td><div class="ratebar"><i style="width:${pct.toFixed(0)}%"></i></div></td>
+        `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderMonth() {
+            const tbody = $('#tb-month');
+            const rows = deriveMonthly();
+            if (rows.every(r => r.sessions === 0 && r.total === 0)) {
+                tbody.innerHTML = `<tr><td colspan="5"><div class="empty">해당 월 데이터가 없습니다.</div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = '';
+            rows.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+          <td>${r.programName}</td>
+          <td class="center knum">${r.sessions}</td>
+          <td class="right knum muted">${r.recipients.toLocaleString()}</td>
+          <td class="right knum muted">${r.general.toLocaleString()}</td>
+          <td class="right knum">${r.total.toLocaleString()}</td>
+        `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderQuarter() {
+            const tbody = $('#tb-quarter');
+            const rows = deriveQuarter();
+            if (rows.every(r => r.byQ.every(q => q.sessions === 0 && q.total === 0))) {
+                tbody.innerHTML = `<tr><td colspan="9"><div class="empty">해당 연도 데이터가 없습니다.</div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = '';
+            rows.forEach(r => {
+                const cells = r.byQ.flatMap(q => [
+                    `<td class="center knum">${q.sessions}</td>`,
+                    `<td class="right knum">${q.total.toLocaleString()}</td>`
+                ]).join('');
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${r.programName}</td>${cells}`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderLogs() {
+            const tbody = $('#tb-logs');
+            const logs = applyLogFilter(state.performanceLogs).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+            if (logs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8"><div class="empty">입력된 로그가 없습니다.</div></td></tr>`;
+                return;
+            }
+            const progById = new Map(state.settings.programs.map(p => [p.id, p.name]));
+            tbody.innerHTML = '';
+            logs.forEach(l => {
+                const tr = document.createElement('tr');
+                const total = (+l.recipients || 0) + (+l.general || 0);
+                tr.innerHTML = `
+          <td class="knum">${fmtDate(l.date)}</td>
+          <td>${progById.get(l.programId) || l.programId}</td>
+          <td>${l.a1}</td>
+          <td>${l.a2 || '—'}</td>
+          <td class="right knum muted">${(+l.recipients || 0).toLocaleString()}</td>
+          <td class="right knum muted">${(+l.general || 0).toLocaleString()}</td>
+          <td class="right knum">${total.toLocaleString()}</td>
+          <td class="center">
+            <button class="btn ghost" data-act="edit" data-id="${l.id}">편집</button>
+            <button class="btn warn" data-act="del" data-id="${l.id}">삭제</button>
+          </td>
+        `;
+                tbody.appendChild(tr);
+            });
+
+            tbody.querySelectorAll('button[data-act="edit"]').forEach(b => {
+                b.addEventListener('click', () => {
+                    const id = b.getAttribute('data-id');
+                    const row = state.performanceLogs.find(x => x.id === id);
+                    if (!row) return;
+                    editingId = id;
+                    inDate.value = fmtDate(row.date);
+                    inProgram.value = row.programId;
+                    fillA1Options(inA1, row.programId, false);
+                    inA1.value = row.a1;
+                    fillA2Options(inA2, row.programId, row.a1, '없음');
+                    inA2.value = row.a2 || '';
+                    inRec.value = row.recipients;
+                    inGen.value = row.general;
+                    btnAdd.textContent = '저장';
+                    btnCancel.style.display = 'inline-flex';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            });
+            tbody.querySelectorAll('button[data-act="del"]').forEach(b => {
+                b.addEventListener('click', () => {
+                    const id = b.getAttribute('data-id');
+                    if (!confirm('이 실적을 삭제하시겠습니까?')) return;
+                    state.performanceLogs = state.performanceLogs.filter(x => x.id !== id);
+                    saveState(state);
+                    if (editingId === id) resetEditing();
+                    refresh();
+                });
+            });
+        }
+
+        /* ===== CSV 내보내기 ===== */
+        function exportCSV() {
+            const header = ['date', 'program', 'activity1', 'activity2', 'recipients', 'general', 'total'];
+            const progById = new Map(state.settings.programs.map(p => [p.id, p.name]));
+            const rows = applyLogFilter(state.performanceLogs)
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .map(l => [
+                    fmtDate(l.date),
+                    (progById.get(l.programId) || l.programId),
+                    l.a1,
+                    l.a2 || '',
+                    (+l.recipients || 0),
+                    (+l.general || 0),
+                    ((+l.recipients || 0) + (+l.general || 0))
+                ]);
+            const csv = [header, ...rows].map(r => r.map(x => {
+                const s = String(x);
+                return /[,"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+            }).join(',')).join('\n');
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `performance_${Date.now()}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        /* ===== 리프레시 & 초기화 ===== */
+        function refresh() {
+            // 필터 종속 보정
+            if (fProgram.value) fillA1Options(fA1, fProgram.value, true);
+            renderActivity();
+            renderMonth();
+            renderQuarter();
+            renderLogs();
+        }
+
+        // 초기 바인딩
+        initForm();
+        initFilter();
+        $('#btn-export').addEventListener('click', exportCSV);
+
+        // 개발 편의
+        window.__swms = {
+            load: () => loadState(),
+            save: (s) => saveState(s),
+            reset: () => { localStorage.setItem(LS_KEY, JSON.stringify(EMPTY_STATE)); location.reload(); }
+        };
+
+        refresh();
+    </script>
+</body>
+
+</html>

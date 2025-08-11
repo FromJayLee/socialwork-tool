@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>사회복지사 업무 관리 시스템 · 사업 예산</title>
+
+    <!-- 필기체 로고 폰트 (홈/실적과 동일) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== 홈/실적과 동일 토큰 ===== */
+        :root {
+            --bg: #0c0f13;
+            --card: #151a22;
+            --text: #e9edf2;
+            --muted: #9aa3af;
+            --line: #202633;
+            --accent: #4da3ff;
+            --accent-2: #77dd77;
+            --danger: #ff5a5a;
+            --chip: #1e2430;
+            --radius: 16px;
+            --gap: 16px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Apple SD Gothic Neo, "Noto Sans KR", Pretendard, system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: saturate(180%) blur(12px);
+            background: linear-gradient(180deg, rgba(12, 15, 19, 0.9), rgba(12, 15, 19, 0.6));
+            border-bottom: 1px solid var(--line);
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .logo-mark {
+            font-family: 'Pacifico', system-ui, cursive;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: .2px;
+            color: var(--text);
+            text-shadow: 0 2px 12px rgba(77, 163, 255, .25);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .tab {
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: var(--muted);
+            border: 1px solid transparent;
+            transition: .2s
+        }
+
+        .tab:hover {
+            color: var(--text);
+            background: var(--chip);
+            border-color: var(--line)
+        }
+
+        .tab.active {
+            color: var(--text);
+            background: #1a2230;
+            border-color: #223148
+        }
+
+        .icon-btn {
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: var(--chip);
+            border: 1px solid var(--line)
+        }
+
+        main {
+            padding: 24px 0 56px
+        }
+
+        /* 공통 카드/텍스트 */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 16px
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #f2f6fb;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .sub {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: var(--chip);
+            color: var(--muted);
+            font-size: 12px;
+            border: 1px solid var(--line)
+        }
+
+        .empty {
+            padding: 10px;
+            border: 1px dashed var(--line);
+            border-radius: 12px;
+            color: var(--muted);
+            background: #10151a
+        }
+
+        .knum {
+            font-variant-numeric: tabular-nums
+        }
+
+        /* 이 페이지 전용 레이아웃 */
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: space-between
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 140px
+        }
+
+        .field label {
+            font-size: 12px;
+            color: var(--muted)
+        }
+
+        input[type="date"],
+        input[type="number"],
+        input[type="text"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #10151d;
+            border: 1px solid var(--line);
+            color: var(--text)
+        }
+
+        input[type="number"] {
+            appearance: textfield
+        }
+
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            margin: 0;
+            -webkit-appearance: none
+        }
+
+        .btn {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #223148;
+            background: #162031;
+            color: var(--text);
+            cursor: pointer
+        }
+
+        .btn.ghost {
+            background: #10151d;
+            border-color: var(--line);
+            color: var(--muted)
+        }
+
+        .btn.warn {
+            background: #3a1c1c;
+            border-color: #4a2525
+        }
+
+        .btn:disabled {
+            opacity: .6;
+            cursor: not-allowed
+        }
+
+        /* 테이블 */
+        .twrap {
+            overflow: auto;
+            border: 1px solid var(--line);
+            border-radius: 12px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 860px
+        }
+
+        th,
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--line);
+            text-align: left
+        }
+
+        th {
+            color: #e9edf2;
+            background: #121821;
+            position: sticky;
+            top: 0
+        }
+
+        tr:hover td {
+            background: #111722
+        }
+
+        .right {
+            text-align: right
+        }
+
+        .center {
+            text-align: center
+        }
+
+        .muted {
+            color: var(--muted)
+        }
+
+        /* 사용률 바 */
+        .ratebar {
+            height: 10px;
+            background: #0d1219;
+            border: 1px solid #1b2330;
+            border-radius: 999px;
+            overflow: hidden
+        }
+
+        .ratebar>i {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-2), #b7ffb7);
+            width: 0%
+        }
+
+        .warn-row {
+            background: #1b1510;
+            color: #ffdca3;
+            border: 1px dashed #3a2c0e;
+            padding: 6px 8px;
+            border-radius: 8px
+        }
+
+        /* 상태 강조 */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 2px 6px;
+            border-radius: 999px;
+            font-size: 12px;
+            border: 1px solid var(--line);
+            background: var(--chip);
+            color: var(--muted)
+        }
+
+        .tag.red {
+            background: #2a171a;
+            color: #ffd7d7;
+            border-color: #402027
+        }
+
+        .tag.yellow {
+            background: #2a2517;
+            color: #ffe4a3;
+            border-color: #40321f
+        }
+
+        .over td {
+            background: #221419 !important
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="wrap head">
+            <div class="logo">
+                <div class="logo-mark" aria-label="사회복지사 업무 관리 시스템">사회복지사 업무 관리 시스템</div>
+            </div>
+            <nav aria-label="주요 탭">
+                <a class="tab" href="./index.html">홈</a>
+                <a class="tab" href="./performance.html">사업 실적</a>
+                <a class="tab active" href="./budget.html" aria-current="page">사업 예산</a>
+                <a class="tab" href="./schedule.html">사업 일정</a>
+                <a class="tab" href="./settings.html">설정</a>
+                <span class="icon-btn" title="알림">🔔</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <!-- 예산 사용 입력 -->
+        <section class="card section" aria-label="예산 사용 입력">
+            <div class="title">
+                <h3>예산 사용 입력</h3>
+                <div class="sub">항목은 설정 탭의 예산 계획을 기준으로 표시됩니다. 필요 시 ‘직접입력’을 선택해 입력할 수 있습니다.</div>
+            </div>
+            <div class="toolbar" id="input-bar">
+                <div class="field" style="min-width:160px">
+                    <label for="in-date">일자</label>
+                    <input id="in-date" type="date" />
+                </div>
+                <div class="field">
+                    <label for="in-program">사업명</label>
+                    <select id="in-program"></select>
+                </div>
+                <div class="field">
+                    <label for="in-a1">세부활동1</label>
+                    <select id="in-a1"></select>
+                </div>
+                <div class="field">
+                    <label for="in-a2">세부활동2(선택)</label>
+                    <select id="in-a2"></select>
+                </div>
+                <div class="field" style="min-width:180px">
+                    <label for="in-item">항목</label>
+                    <select id="in-item"></select>
+                </div>
+                <div class="field" style="min-width:180px; display:none" id="custom-item-wrap">
+                    <label for="in-item-text">항목(직접입력)</label>
+                    <input id="in-item-text" type="text" placeholder="예: 강사비, 재료비" />
+                </div>
+                <div class="field" style="min-width:140px">
+                    <label for="in-amount">사용금액(원)</label>
+                    <input id="in-amount" type="number" inputmode="numeric" min="0" step="1" placeholder="0" />
+                </div>
+                <div style="margin-left:auto; display:flex; gap:8px; align-items:flex-end">
+                    <button id="btn-add" class="btn">추가</button>
+                    <button id="btn-cancel" class="btn ghost" style="display:none">취소</button>
+                </div>
+            </div>
+            <div id="plan-hint" class="sub" style="margin-top:-4px"></div>
+        </section>
+
+        <!-- 보기 필터 -->
+        <section class="card section" aria-label="보기 필터">
+            <div class="title">
+                <h3>보기 필터</h3>
+            </div>
+            <div class="toolbar">
+                <div class="field">
+                    <label for="f-program">사업명</label>
+                    <select id="f-program"></select>
+                </div>
+                <div class="field">
+                    <label for="f-a1">세부활동1</label>
+                    <select id="f-a1"></select>
+                </div>
+                <div class="field">
+                    <label for="f-a2">세부활동2</label>
+                    <select id="f-a2"></select>
+                </div>
+                <div class="field">
+                    <label for="f-ym">연·월</label>
+                    <input id="f-ym" type="month" />
+                </div>
+                <div class="field">
+                    <label for="f-year">연도(분기표)</label>
+                    <select id="f-year"></select>
+                </div>
+                <div style="display:flex; align-items:flex-end">
+                    <button id="btn-reset-filter" class="btn ghost">필터 초기화</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 활동/항목별 요약 -->
+        <section class="section" aria-label="활동/항목별 요약">
+            <div class="title">
+                <h3>활동·항목별 예산 요약</h3>
+                <div class="sub">사용률 = 사용 / 계획. 계획이 없는데 사용이 있으면 ‘비계획’으로 표시합니다.</div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width:280px">사업 · 활동 · 항목</th>
+                            <th class="right">계획(원)</th>
+                            <th class="right">사용(원)</th>
+                            <th class="right">잔여(원)</th>
+                            <th class="right">사용률</th>
+                            <th style="min-width:140px">진행바</th>
+                            <th class="center">상태</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-summary">
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty">데이터가 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 월별 합계 -->
+        <section class="section" aria-label="월별 합계">
+            <div class="title">
+                <h3>월별 합계 <span class="pill" id="label-month">-</span></h3>
+                <div class="sub">선택 연·월 기준 사용금액 합계</div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>사업명</th>
+                            <th class="right">금액(원)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-month">
+                        <tr>
+                            <td colspan="2">
+                                <div class="empty">해당 월 데이터가 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 분기별 합계 -->
+        <section class="section" aria-label="분기별 합계">
+            <div class="title">
+                <h3>분기별 합계 <span class="pill" id="label-year">-</span></h3>
+                <div class="sub">분기별 사용금액(원)</div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>사업명</th>
+                            <th class="right">Q1</th>
+                            <th class="right">Q2</th>
+                            <th class="right">Q3</th>
+                            <th class="right">Q4</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-quarter">
+                        <tr>
+                            <td colspan="5">
+                                <div class="empty">해당 연도 데이터가 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 입력 로그 -->
+        <section class="section" aria-label="입력 로그">
+            <div class="title">
+                <h3>입력 로그</h3>
+                <div style="display:flex; gap:8px; align-items:center">
+                    <span class="sub">최근순</span>
+                    <button id="btn-export" class="btn ghost">CSV 내보내기</button>
+                </div>
+            </div>
+            <div class="twrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="min-width:120px">일자</th>
+                            <th>사업명</th>
+                            <th>세부활동1</th>
+                            <th>세부활동2</th>
+                            <th>항목</th>
+                            <th class="right">금액(원)</th>
+                            <th class="center" style="min-width:140px">수정</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tb-logs">
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty">입력된 로그가 없습니다.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        /* ===== 상태 (홈/실적과 공유) ===== */
+        const LS_KEY = 'swms_home_v1'; // 홈과 동일 키 사용 :contentReference[oaicite:2]{index=2}
+        const EMPTY_STATE = Object.freeze({
+            settings: { programs: [], activities: [], budgets: [], schedules: [] },
+            performanceLogs: [], budgetLogs: []
+        });
+
+        function loadState() { try { const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : structuredClone(EMPTY_STATE); } catch (e) { return structuredClone(EMPTY_STATE); } }
+        function saveState(s) { localStorage.setItem(LS_KEY, JSON.stringify(s)); }
+
+        /* ===== 유틸 ===== */
+        const today = new Date();
+        const pad = n => String(n).padStart(2, '0');
+        const fmtDate = d => { const T = d instanceof Date ? d : new Date(d); return `${T.getFullYear()}-${pad(T.getMonth() + 1)}-${pad(T.getDate())}`; }
+        const ymFrom = d => { const T = d instanceof Date ? d : new Date(d); return `${T.getFullYear()}-${pad(T.getMonth() + 1)}`; }
+        const quarterOf = d => Math.ceil((d.getMonth() + 1) / 3);
+        const sumBy = (arr, sel) => arr.reduce((s, x) => s + (+sel(x) || 0), 0);
+        const $ = q => document.querySelector(q);
+
+        /* ===== 전역 ===== */
+        let state = loadState();
+        let editingId = null;
+
+        /* ===== 폼 DOM ===== */
+        const inDate = $('#in-date');
+        const inProgram = $('#in-program');
+        const inA1 = $('#in-a1');
+        const inA2 = $('#in-a2');
+        const inItem = $('#in-item');
+        const inItemText = $('#in-item-text');
+        const customItemWrap = $('#custom-item-wrap');
+        const inAmount = $('#in-amount');
+        const btnAdd = $('#btn-add');
+        const btnCancel = $('#btn-cancel');
+        const planHint = $('#plan-hint');
+
+        /* ===== 필터 DOM ===== */
+        const fProgram = $('#f-program');
+        const fA1 = $('#f-a1');
+        const fA2 = $('#f-a2');
+        const fYM = $('#f-ym');
+        const fYear = $('#f-year');
+        const btnResetFilter = $('#btn-reset-filter');
+
+        /* ===== 옵션 채우기 ===== */
+        function fillProgramOptions(selectEl, withAll = false) {
+            selectEl.innerHTML = ''; if (withAll) selectEl.append(new Option('전체', ''));
+            state.settings.programs.forEach(p => selectEl.append(new Option(p.name, p.id)));
+        }
+        function fillA1Options(selectEl, programId, withAll = false) {
+            selectEl.innerHTML = ''; if (withAll) selectEl.append(new Option('전체', ''));
+            if (!programId) return;
+            const uniq = [...new Set(state.settings.activities.filter(a => a.programId === programId).map(a => a.a1))];
+            uniq.forEach(a1 => selectEl.append(new Option(a1, a1)));
+        }
+        function fillA2Options(selectEl, programId, a1, withAll = false, emptyLabel = '없음') {
+            selectEl.innerHTML = ''; if (withAll) selectEl.append(new Option('전체', ''));
+            if (!programId || !a1) { selectEl.append(new Option(emptyLabel, '')); return; }
+            const list = state.settings.activities.filter(a => a.programId === programId && a.a1 === a1).map(a => a.a2);
+            const uniq = [...new Set(list)];
+            if (!withAll) selectEl.append(new Option(emptyLabel, ''));
+            uniq.filter(v => v != null).forEach(a2 => selectEl.append(new Option(a2, a2)));
+        }
+        function fillItemOptions(selectEl, programId, a1, a2, allowCustom = true) {
+            selectEl.innerHTML = '';
+            const items = [...new Set(state.settings.budgets
+                .filter(b => b.programId === programId && b.a1 === a1 && (b.a2 || '') === (a2 || ''))
+                .map(b => b.item))];
+            if (items.length === 0) {
+                if (allowCustom) { selectEl.append(new Option('직접입력', '__custom__')); }
+                return;
+            }
+            items.forEach(it => selectEl.append(new Option(it, it)));
+            if (allowCustom) selectEl.append(new Option('직접입력', '__custom__'));
+        }
+
+        function showPlanHint() {
+            const pid = inProgram.value, a1 = inA1.value, a2 = inA2.value || '';
+            const plans = state.settings.budgets.filter(b => b.programId === pid && b.a1 === a1 && (b.a2 || '') === a2);
+            if (plans.length === 0) { planHint.textContent = '이 활동에 등록된 계획 예산이 없습니다. 입력 시 비계획 지출로 처리됩니다.'; return; }
+            const totalPlan = sumBy(plans, b => b.planned || 0);
+            const used = sumBy(state.budgetLogs.filter(l => l.programId === pid && l.a1 === a1 && (l.a2 || '') === a2), l => l.amount || 0);
+            planHint.textContent = `해당 활동 계획 합계: ${totalPlan.toLocaleString()}원 · 현재 사용: ${used.toLocaleString()}원`;
+        }
+
+        /* ===== 초기화 ===== */
+        function initForm() {
+            inDate.value = fmtDate(today);
+            fillProgramOptions(inProgram, false);
+            const pid = inProgram.value || state.settings.programs[0]?.id || '';
+            fillA1Options(inA1, pid, false);
+            fillA2Options(inA2, pid, inA1.value, false, '없음');
+            fillItemOptions(inItem, pid, inA1.value, inA2.value || '', true);
+            toggleCustomItem();
+
+            inProgram.addEventListener('change', () => {
+                fillA1Options(inA1, inProgram.value, false);
+                fillA2Options(inA2, inProgram.value, inA1.value, false, '없음');
+                fillItemOptions(inItem, inProgram.value, inA1.value, inA2.value || '', true);
+                toggleCustomItem();
+                showPlanHint();
+            });
+            inA1.addEventListener('change', () => {
+                fillA2Options(inA2, inProgram.value, inA1.value, false, '없음');
+                fillItemOptions(inItem, inProgram.value, inA1.value, inA2.value || '', true);
+                toggleCustomItem();
+                showPlanHint();
+            });
+            inA2.addEventListener('change', () => {
+                fillItemOptions(inItem, inProgram.value, inA1.value, inA2.value || '', true);
+                toggleCustomItem();
+                showPlanHint();
+            });
+            inItem.addEventListener('change', toggleCustomItem);
+
+            btnAdd.addEventListener('click', onSubmit);
+            btnCancel.addEventListener('click', resetEditing);
+
+            showPlanHint();
+        }
+
+        function toggleCustomItem() {
+            const custom = inItem.value === '__custom__';
+            customItemWrap.style.display = custom ? 'flex' : 'none';
+        }
+
+        function initFilter() {
+            fillProgramOptions(fProgram, true);
+            fillA1Options(fA1, fProgram.value, true);
+            fillA2Options(fA2, fProgram.value, fA1.value || '', true, '전체');
+            fYM.value = ymFrom(today);
+            fillYears(); fYear.value = String(today.getFullYear());
+
+            fProgram.addEventListener('change', () => {
+                fillA1Options(fA1, fProgram.value, true);
+                fillA2Options(fA2, fProgram.value, fA1.value || '', true, '전체');
+                refresh();
+            });
+            fA1.addEventListener('change', () => {
+                fillA2Options(fA2, fProgram.value, fA1.value || '', true, '전체');
+                refresh();
+            });
+            fA2.addEventListener('change', refresh);
+            fYM.addEventListener('change', refresh);
+            fYear.addEventListener('change', refresh);
+            btnResetFilter.addEventListener('click', () => {
+                fProgram.value = ''; fillA1Options(fA1, '', true); fA1.value = '';
+                fillA2Options(fA2, '', '', true, '전체'); fA2.value = '';
+                fYM.value = ymFrom(today); fYear.value = String(today.getFullYear());
+                refresh();
+            });
+        }
+        function fillYears() {
+            const years = new Set(state.budgetLogs.map(l => new Date(l.date).getFullYear()));
+            if (years.size === 0) years.add(today.getFullYear());
+            fYear.innerHTML = '';[...years].sort((a, b) => a - b).forEach(y => fYear.append(new Option(String(y), String(y))));
+        }
+
+        /* ===== 제출/편집 ===== */
+        function onSubmit() {
+            const date = inDate.value;
+            const programId = inProgram.value;
+            const a1 = inA1.value;
+            const a2 = inA2.value || null;
+            const item = inItem.value === '__custom__' ? (inItemText.value || '').trim() : inItem.value;
+            const amount = Math.max(0, parseInt(inAmount.value || '0', 10));
+
+            if (!date || !programId || !a1 || !item) {
+                alert('일자, 사업명, 세부활동1, 항목은 필수입니다.');
+                return;
+            }
+            if (!(amount > 0)) {
+                alert('사용금액을 1원 이상 입력하세요.');
+                return;
+            }
+            // 설정에 존재하는 활동 키 검증
+            const existsAct = state.settings.activities.some(a => a.programId === programId && a.a1 === a1 && (a.a2 || null) === (a2 || null));
+            if (!existsAct) {
+                alert('설정 탭에 없는 활동입니다. 먼저 설정에서 등록하세요.');
+                return;
+            }
+
+            if (editingId) {
+                const idx = state.budgetLogs.findIndex(l => l.id === editingId);
+                if (idx >= 0) {
+                    state.budgetLogs[idx] = { id: editingId, date, programId, a1, a2, item, amount };
+                    saveState(state); resetEditing(); refresh();
+                }
+            } else {
+                const id = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
+                state.budgetLogs.push({ id, date, programId, a1, a2, item, amount });
+                saveState(state); clearInputs(); refresh();
+            }
+        }
+        function clearInputs() {
+            inDate.value = fmtDate(today); inAmount.value = '';
+            inItemText.value = ''; editingId = null; btnAdd.textContent = '추가'; btnCancel.style.display = 'none';
+        }
+        function resetEditing() {
+            editingId = null; btnAdd.textContent = '추가'; btnCancel.style.display = 'none';
+            inAmount.value = ''; inItemText.value = '';
+        }
+
+        /* ===== 필터 ===== */
+        function currentFilters() {
+            return {
+                programId: fProgram.value || '',
+                a1: fA1.value || '',
+                a2: fA2.value || '',
+                ym: fYM.value || ymFrom(today),
+                year: parseInt(fYear.value || String(today.getFullYear()), 10)
+            };
+        }
+        function applyLogFilter(logs) {
+            const { programId, a1, a2, ym } = currentFilters();
+            return logs.filter(l => {
+                if (programId && l.programId !== programId) return false;
+                if (a1 && l.a1 !== a1) return false;
+                if (a2 && (l.a2 || '') !== a2) return false;
+                if (ym && ymFrom(l.date) !== ym) return false;
+                return true;
+            });
+        }
+
+        /* ===== 룩업/파생 ===== */
+        function buildLookups() {
+            const progById = new Map(state.settings.programs.map(p => [p.id, p]));
+            const planByKey = new Map(); // key = pid|a1|a2|item
+            state.settings.budgets.forEach(b => {
+                const key = [b.programId, b.a1, b.a2 || '', b.item].join('|');
+                const prev = planByKey.get(key) || 0;
+                planByKey.set(key, prev + (+b.planned || 0));
+            });
+            return { progById, planByKey };
+        }
+
+        function deriveSummaryRows() {
+            const { progById, planByKey } = buildLookups();
+            const logs = applyLogFilter(state.budgetLogs);
+            const usedByKey = new Map();
+            logs.forEach(l => {
+                const k = [l.programId, l.a1, l.a2 || '', l.item].join('|');
+                usedByKey.set(k, (usedByKey.get(k) || 0) + (+l.amount || 0));
+            });
+
+            // 모든 키(계획 + 사용)를 합집합으로
+            const allKeys = new Set([...planByKey.keys(), ...usedByKey.keys()]);
+            const rows = [];
+            allKeys.forEach(k => {
+                const [pid, a1, a2s, item] = k.split('|');
+                const a2 = a2s || null;
+                const planned = planByKey.get(k) || 0;
+                const used = usedByKey.get(k) || 0;
+                const remaining = planned - used;
+                const rate = planned > 0 ? (used / planned) : null;
+                const status = planned === 0 && used > 0 ? '비계획' : (rate !== null && rate > 1 ? '초과' : (rate !== null && rate >= 0.8 ? '임계' : '정상'));
+                rows.push({
+                    pid, programName: (progById.get(pid)?.name || pid),
+                    a1, a2, item, planned, used, remaining, rate, status
+                });
+            });
+
+            rows.sort((x, y) => {
+                if (x.programName !== y.programName) return x.programName.localeCompare(y.programName, 'ko');
+                if (x.a1 !== y.a1) return x.a1.localeCompare(y.a1, 'ko');
+                if ((x.a2 || '') !== (y.a2 || '')) return (x.a2 || '').localeCompare(y.a2 || '', 'ko');
+                return x.item.localeCompare(y.item, 'ko');
+            });
+            return rows;
+        }
+
+        function deriveMonthly() {
+            const ym = currentFilters().ym; $('#label-month').textContent = ym;
+            const byProg = new Map();
+            state.budgetLogs.filter(l => ymFrom(l.date) === ym).forEach(l => {
+                byProg.set(l.programId, (byProg.get(l.programId) || 0) + (+l.amount || 0));
+            });
+            return state.settings.programs.map(p => ({ programName: p.name, amount: byProg.get(p.id) || 0 }));
+        }
+
+        function deriveQuarter() {
+            const year = currentFilters().year; $('#label-year').textContent = String(year);
+            return state.settings.programs.map(p => {
+                const L = state.budgetLogs.filter(l => new Date(l.date).getFullYear() === year && l.programId === p.id);
+                const byQ = [1, 2, 3, 4].map(q => sumBy(L.filter(l => quarterOf(new Date(l.date)) === q), x => x.amount));
+                return { programName: p.name, byQ };
+            });
+        }
+
+        /* ===== 렌더 ===== */
+        function renderSummary() {
+            const tbody = $('#tb-summary');
+            const rows = deriveSummaryRows();
+            if (rows.length === 0) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty">데이터가 없습니다.</div></td></tr>`; return; }
+            tbody.innerHTML = '';
+
+            // 프로그램 단위 소계 출력을 위해 그룹화
+            const groups = new Map();
+            rows.forEach(r => {
+                const key = r.programName;
+                if (!groups.has(key)) groups.set(key, []);
+                groups.get(key).push(r);
+            });
+
+            groups.forEach((list, programName) => {
+                // 프로그램 헤더(가독성)
+                const trH = document.createElement('tr');
+                trH.innerHTML = `<td colspan="7" class="muted" style="background:#10151d"><strong>${programName}</strong></td>`;
+                tbody.appendChild(trH);
+
+                // 상세 행
+                list.forEach(r => {
+                    const pct = r.rate == null ? 0 : Math.min(100, Math.max(0, r.rate * 100));
+                    const tr = document.createElement('tr');
+                    if (r.rate != null && r.rate > 1) tr.classList.add('over');
+                    tr.innerHTML = `
+            <td>${r.a1}${r.a2 ? (' · ' + r.a2) : ''} · ${r.item}</td>
+            <td class="right knum">${r.planned.toLocaleString()}</td>
+            <td class="right knum">${r.used.toLocaleString()}</td>
+            <td class="right knum">${(r.remaining).toLocaleString()}</td>
+            <td class="right knum">${r.rate == null ? '-' : (pct.toFixed(0) + '%')}</td>
+            <td><div class="ratebar"><i style="width:${pct.toFixed(0)}%"></i></div></td>
+            <td class="center">${r.status === '비계획' ? '<span class="tag red">비계획</span>' :
+                            r.status === '초과' ? '<span class="tag red">초과</span>' :
+                                r.status === '임계' ? '<span class="tag yellow">80%↑</span>' :
+                                    '<span class="tag">정상</span>'
+                        }</td>
+          `;
+                    tbody.appendChild(tr);
+                });
+
+                // 소계
+                const planSum = sumBy(list, x => x.planned);
+                const usedSum = sumBy(list, x => x.used);
+                const remSum = planSum - usedSum;
+                const rate = planSum > 0 ? usedSum / planSum : null;
+                const pct = rate == null ? 0 : Math.min(100, Math.max(0, rate * 100));
+                const trS = document.createElement('tr');
+                trS.innerHTML = `
+          <td><strong>합계</strong></td>
+          <td class="right knum"><strong>${planSum.toLocaleString()}</strong></td>
+          <td class="right knum"><strong>${usedSum.toLocaleString()}</strong></td>
+          <td class="right knum"><strong>${remSum.toLocaleString()}</strong></td>
+          <td class="right knum"><strong>${rate == null ? '-' : (pct.toFixed(0) + '%')}</strong></td>
+          <td><div class="ratebar"><i style="width:${pct.toFixed(0)}%"></i></div></td>
+          <td></td>
+        `;
+                tbody.appendChild(trS);
+            });
+        }
+
+        function renderMonth() {
+            const tbody = $('#tb-month');
+            const rows = deriveMonthly();
+            if (rows.every(r => r.amount === 0)) {
+                tbody.innerHTML = `<tr><td colspan="2"><div class="empty">해당 월 데이터가 없습니다.</div></td></tr>`; return;
+            }
+            tbody.innerHTML = '';
+            rows.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${r.programName}</td><td class="right knum">${r.amount.toLocaleString()}</td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderQuarter() {
+            const tbody = $('#tb-quarter');
+            const rows = deriveQuarter();
+            if (rows.every(r => r.byQ.every(v => v === 0))) {
+                tbody.innerHTML = `<tr><td colspan="5"><div class="empty">해당 연도 데이터가 없습니다.</div></td></tr>`; return;
+            }
+            tbody.innerHTML = '';
+            rows.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+          <td>${r.programName}</td>
+          <td class="right knum">${r.byQ[0].toLocaleString()}</td>
+          <td class="right knum">${r.byQ[1].toLocaleString()}</td>
+          <td class="right knum">${r.byQ[2].toLocaleString()}</td>
+          <td class="right knum">${r.byQ[3].toLocaleString()}</td>
+        `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderLogs() {
+            const tbody = $('#tb-logs');
+            const logs = applyLogFilter(state.budgetLogs).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+            if (logs.length === 0) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty">입력된 로그가 없습니다.</div></td></tr>`; return; }
+            const progById = new Map(state.settings.programs.map(p => [p.id, p.name]));
+            tbody.innerHTML = '';
+            logs.forEach(l => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+          <td class="knum">${fmtDate(l.date)}</td>
+          <td>${progById.get(l.programId) || l.programId}</td>
+          <td>${l.a1}</td>
+          <td>${l.a2 || '—'}</td>
+          <td>${l.item}</td>
+          <td class="right knum">${(+l.amount || 0).toLocaleString()}</td>
+          <td class="center">
+            <button class="btn ghost" data-act="edit" data-id="${l.id}">편집</button>
+            <button class="btn warn" data-act="del" data-id="${l.id}">삭제</button>
+          </td>
+        `;
+                tbody.appendChild(tr);
+            });
+
+            tbody.querySelectorAll('button[data-act="edit"]').forEach(b => {
+                b.addEventListener('click', () => {
+                    const id = b.getAttribute('data-id');
+                    const row = state.budgetLogs.find(x => x.id === id); if (!row) return;
+                    editingId = id;
+                    inDate.value = fmtDate(row.date);
+                    inProgram.value = row.programId;
+                    fillA1Options(inA1, row.programId, false); inA1.value = row.a1;
+                    fillA2Options(inA2, row.programId, row.a1, false, '없음'); inA2.value = row.a2 || '';
+                    fillItemOptions(inItem, row.programId, row.a1, row.a2 || '', true);
+                    // 선택지에 없는 항목이면 커스텀으로
+                    const items = [...inItem.options].map(o => o.value);
+                    if (!items.includes(row.item)) {
+                        inItem.value = '__custom__'; toggleCustomItem(); inItemText.value = row.item;
+                    } else {
+                        inItem.value = row.item; toggleCustomItem(); inItemText.value = '';
+                    }
+                    inAmount.value = row.amount;
+                    btnAdd.textContent = '저장'; btnCancel.style.display = 'inline-flex';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    showPlanHint();
+                });
+            });
+            tbody.querySelectorAll('button[data-act="del"]').forEach(b => {
+                b.addEventListener('click', () => {
+                    const id = b.getAttribute('data-id');
+                    if (!confirm('이 예산 사용 로그를 삭제하시겠습니까?')) return;
+                    state.budgetLogs = state.budgetLogs.filter(x => x.id !== id);
+                    saveState(state); if (editingId === id) resetEditing(); refresh();
+                });
+            });
+        }
+
+        /* ===== CSV 내보내기 ===== */
+        function exportCSV() {
+            const header = ['date', 'program', 'activity1', 'activity2', 'item', 'amount'];
+            const progById = new Map(state.settings.programs.map(p => [p.id, p.name]));
+            const rows = applyLogFilter(state.budgetLogs)
+                .sort((a, b) => new Date(a.date) - new Date(b.date))
+                .map(l => [
+                    fmtDate(l.date),
+                    (progById.get(l.programId) || l.programId),
+                    l.a1,
+                    l.a2 || '',
+                    l.item,
+                    (+l.amount || 0)
+                ]);
+            const csv = [header, ...rows].map(r => r.map(x => {
+                const s = String(x); return /[,"\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+            }).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = `budget_${Date.now()}.csv`; a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        /* ===== 리프레시 & 초기 바인딩 ===== */
+        function refresh() {
+            // 필터 종속 보정
+            if (fProgram.value) fillA1Options(fA1, fProgram.value, true);
+            if (fProgram.value || fA1.value) fillA2Options(fA2, fProgram.value, fA1.value || '', true, '전체');
+            renderSummary(); renderMonth(); renderQuarter(); renderLogs();
+        }
+
+        initForm();
+        initFilter();
+        $('#btn-export').addEventListener('click', exportCSV);
+
+        // 개발 편의
+        window.__swms = {
+            load: () => loadState(),
+            save: (s) => saveState(s),
+            reset: () => { localStorage.setItem(LS_KEY, JSON.stringify(EMPTY_STATE)); location.reload(); }
+        };
+
+        refresh();
+    </script>
+</body>
+
+</html>

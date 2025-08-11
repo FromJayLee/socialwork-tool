@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>사회복지사 업무 관리 시스템 · 홈</title>
+
+    <!-- 필기체 로고 폰트 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #0c0f13;
+            --card: #151a22;
+            --text: #e9edf2;
+            --muted: #9aa3af;
+            --line: #202633;
+            --accent: #4da3ff;
+            --accent-2: #77dd77;
+            --danger: #ff5a5a;
+            --chip: #1e2430;
+            --radius: 16px;
+            --gap: 16px;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Apple SD Gothic Neo, "Noto Sans KR", Pretendard, system-ui, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            backdrop-filter: saturate(180%) blur(12px);
+            background: linear-gradient(180deg, rgba(12, 15, 19, 0.9), rgba(12, 15, 19, 0.6));
+            border-bottom: 1px solid var(--line);
+        }
+
+        .wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+        }
+
+        .head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px
+        }
+
+        .logo-mark {
+            font-family: 'Pacifico', system-ui, cursive;
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: .2px;
+            color: var(--text);
+            text-shadow: 0 2px 12px rgba(77, 163, 255, .25);
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap
+        }
+
+        .tab {
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: var(--muted);
+            border: 1px solid transparent;
+            transition: .2s
+        }
+
+        .tab:hover {
+            color: var(--text);
+            background: var(--chip);
+            border-color: var(--line)
+        }
+
+        .tab.active {
+            color: var(--text);
+            background: #1a2230;
+            border-color: #223148
+        }
+
+        .icon-btn {
+            padding: 8px 10px;
+            border-radius: 10px;
+            background: var(--chip);
+            border: 1px solid var(--line)
+        }
+
+        main {
+            padding: 24px 0 56px
+        }
+
+        .grid {
+            display: grid;
+            gap: var(--gap);
+            grid-template-columns: 1fr
+        }
+
+        @media (min-width:720px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr)
+            }
+        }
+
+        @media (min-width:1024px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr)
+            }
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 16px
+        }
+
+        .card h3 {
+            margin: 0 0 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #f2f6fb;
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .sub {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #121821;
+        }
+
+        .row .left {
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .checkbox {
+            width: 18px;
+            height: 18px
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background: var(--chip);
+            color: var(--muted);
+            font-size: 12px;
+            border: 1px solid var(--line)
+        }
+
+        .pill.red {
+            color: #ffd7d7;
+            background: #2a171a;
+            border-color: #402027
+        }
+
+        .bars {
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .bar {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: #10151d;
+            border: 1px solid var(--line);
+            padding: 10px;
+            border-radius: 12px
+        }
+
+        .bar .label {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text)
+        }
+
+        .bar .track {
+            height: 10px;
+            background: #0d1219;
+            border-radius: 999px;
+            overflow: hidden;
+            border: 1px solid #1b2330
+        }
+
+        .bar .fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent), #7fc1ff);
+            transition: width .6s ease
+        }
+
+        .bar .fill.alt {
+            background: linear-gradient(90deg, var(--accent-2), #b7ffb7)
+        }
+
+        .two-col {
+            display: grid;
+            gap: var(--gap);
+            grid-template-columns: 1fr
+        }
+
+        @media (min-width:900px) {
+            .two-col {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        .warn-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px dashed #3a2c0e;
+            background: #1b1510;
+            color: #ffdca3;
+        }
+
+        .knum {
+            font-variant-numeric: tabular-nums
+        }
+
+        .footer-note {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 12px
+        }
+
+        .empty {
+            padding: 10px;
+            border: 1px dashed var(--line);
+            border-radius: 12px;
+            color: var(--muted);
+            background: #10151a
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="wrap head">
+            <div class="logo">
+                <div class="logo-mark" aria-label="사회복지사 업무 관리 시스템">사회복지사 업무 관리 시스템</div>
+            </div>
+            <nav aria-label="주요 탭">
+                <a class="tab active" href="./index.html" aria-current="page">홈</a>
+                <a class="tab" href="./performance.html">사업 실적</a>
+                <a class="tab" href="./budget.html">사업 예산</a>
+                <a class="tab" href="./schedule.html">사업 일정</a>
+                <a class="tab" href="./settings.html">설정</a>
+                <span class="icon-btn" title="알림">🔔</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="wrap">
+        <!-- 상단 3카드 -->
+        <section class="grid" aria-label="요약 위젯">
+            <article class="card" aria-live="polite">
+                <h3>오늘 할 일 <span class="pill" id="today-count">0건</span></h3>
+                <div class="list" id="today-list">
+                    <div class="empty">오늘 예정된 일정이 없습니다.</div>
+                </div>
+                <div class="footer-note">체크하면 해당 회기가 완료 처리됩니다.</div>
+            </article>
+
+            <article class="card">
+                <h3>이번 주 · 이번 달</h3>
+                <div class="list">
+                    <div class="row">
+                        <div class="left">
+                            <div>
+                                <div>이번 주 예정 회기</div>
+                                <div class="sub" id="week-meta">-</div>
+                            </div>
+                        </div>
+                        <div class="pill" id="week-count">0/0</div>
+                    </div>
+                    <div class="row">
+                        <div class="left">
+                            <div>
+                                <div>이번 달 예정 회기</div>
+                                <div class="sub" id="month-meta">-</div>
+                            </div>
+                        </div>
+                        <div class="pill" id="month-count">0/0</div>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card">
+                <h3>예산 소진 경고 <span class="pill" title="임계치 80% 기준">임계치 80%</span></h3>
+                <div class="list" id="budget-warnings">
+                    <div class="empty">임계치를 초과한 항목이 없습니다.</div>
+                </div>
+            </article>
+        </section>
+
+        <!-- 진행률 섹션 -->
+        <section class="two-col" style="margin-top:24px" aria-label="진행률 섹션">
+            <article class="card">
+                <h3>사업별 실적 달성률 <span class="sub">(회기·인원 평균)</span></h3>
+                <div class="bars" id="performance-bars">
+                    <div class="empty">설정된 사업이 없습니다.</div>
+                </div>
+            </article>
+            <article class="card">
+                <h3>사업별 예산 사용률</h3>
+                <div class="bars" id="budget-bars">
+                    <div class="empty">설정된 예산이 없습니다.</div>
+                </div>
+            </article>
+        </section>
+
+        <!-- 지연 경고 -->
+        <section style="margin-top:24px">
+            <article class="card">
+                <h3>지연된 일정 <span class="pill red" id="overdue-count">0건</span></h3>
+                <div class="list" id="overdue-list">
+                    <div class="empty">지연된 일정이 없습니다.</div>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        // ===== 상태 =====
+        const LS_KEY = 'swms_home_v1'; // 새 키로 시작(이전 데이터 무시)
+        const EMPTY_STATE = Object.freeze({
+            settings: { programs: [], activities: [], budgets: [], schedules: [] },
+            performanceLogs: [],
+            budgetLogs: []
+        });
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(LS_KEY);
+                return raw ? JSON.parse(raw) : structuredClone(EMPTY_STATE);
+            } catch (e) {
+                return structuredClone(EMPTY_STATE);
+            }
+        }
+        function saveState(s) { localStorage.setItem(LS_KEY, JSON.stringify(s)); }
+
+        // ===== 날짜 유틸 =====
+        const today = new Date();
+        function fmtDate(d) { if (!(d instanceof Date)) d = new Date(d); const y = d.getFullYear(), m = String(d.getMonth() + 1).padStart(2, '0'), da = String(d.getDate()).padStart(2, '0'); return `${y}-${m}-${da}`; }
+        function startOfWeek(d) { const t = new Date(d); const day = (t.getDay() + 6) % 7; t.setDate(t.getDate() - day); t.setHours(0, 0, 0, 0); return t; }
+        function endOfWeek(d) { const s = startOfWeek(d); const e = new Date(s); e.setDate(s.getDate() + 6); e.setHours(23, 59, 59, 999); return e; }
+        function startOfMonth(d) { const t = new Date(d.getFullYear(), d.getMonth(), 1); t.setHours(0, 0, 0, 0); return t; }
+        function endOfMonth(d) { const t = new Date(d.getFullYear(), d.getMonth() + 1, 0); t.setHours(23, 59, 59, 999); return t; }
+        function daysDiff(a, b) { const A = new Date(a); A.setHours(0, 0, 0, 0); const B = new Date(b); B.setHours(0, 0, 0, 0); return Math.round((A - B) / (1000 * 60 * 60 * 24)); }
+        function sum(arr) { return arr.reduce((s, n) => s + (+n || 0), 0); }
+
+        // ===== DOM 유틸 =====
+        function el(tag, props = {}, ...children) {
+            const e = document.createElement(tag);
+            Object.entries(props).forEach(([k, v]) => {
+                if (k === 'class') e.className = v;
+                else if (k === 'html') e.innerHTML = v;
+                else if (k.startsWith('on') && typeof v === 'function') e.addEventListener(k.substring(2), v);
+                else if (v !== undefined) e.setAttribute(k, v);
+            });
+            children.forEach(c => { if (c == null) return; if (typeof c === 'string') e.appendChild(document.createTextNode(c)); else e.appendChild(c); });
+            return e;
+        }
+
+        // ===== 파생 계산 =====
+        function derive(state) {
+            const { programs, activities, budgets, schedules } = state.settings;
+            const perfLogs = state.performanceLogs;
+            const budgLogs = state.budgetLogs;
+
+            const byProgram = {};
+            programs.forEach(p => {
+                const acts = activities.filter(a => a.programId === p.id);
+                const targetSessions = sum(acts.map(a => a.targetSessions || 0));
+                const targetParticipants = sum(acts.map(a => a.targetParticipants || 0));
+
+                const programSchedules = schedules.filter(s => s.programId === p.id);
+                const actualSessions = programSchedules.filter(s => s.done).length;
+
+                const programPerfLogs = perfLogs.filter(l => l.programId === p.id);
+                const actualParticipants = sum(programPerfLogs.map(l => (+l.recipients || 0) + (+l.general || 0)));
+
+                const sessionsRate = targetSessions > 0 ? actualSessions / targetSessions : null;
+                const participantsRate = targetParticipants > 0 ? actualParticipants / targetParticipants : null;
+                let perfRate = null;
+                if (sessionsRate !== null && participantsRate !== null) perfRate = (sessionsRate + participantsRate) / 2;
+                else if (sessionsRate !== null) perfRate = sessionsRate;
+                else if (participantsRate !== null) perfRate = participantsRate;
+
+                const plan = budgets.filter(b => b.programId === p.id);
+                const planned = sum(plan.map(b => b.planned || 0));
+                const used = sum(budgLogs.filter(b => b.programId === p.id).map(b => b.amount || 0));
+                const budgRate = planned > 0 ? used / planned : null;
+
+                byProgram[p.id] = { program: p, targetSessions, actualSessions, targetParticipants, actualParticipants, perfRate, planned, used, budgRate };
+            });
+
+            const overdue = schedules
+                .filter(s => !s.done && new Date(s.plannedDate) < new Date(fmtDate(today)))
+                .map(s => ({ ...s, dplus: daysDiff(today, new Date(s.plannedDate)) }));
+
+            const startW = startOfWeek(today), endW = endOfWeek(today);
+            const startM = startOfMonth(today), endM = endOfMonth(today);
+            const isBetween = (d, st, ed) => new Date(d) >= st && new Date(d) <= ed;
+
+            const todayList = schedules.filter(s => fmtDate(s.plannedDate) === fmtDate(today));
+            const weekList = schedules.filter(s => isBetween(s.plannedDate, startW, endW));
+            const monthList = schedules.filter(s => isBetween(s.plannedDate, startM, endM));
+
+            return { byProgram, overdue, todayList, weekList, monthList };
+        }
+
+        // ===== 렌더 =====
+        function clearBox(id, placeholderText) {
+            const box = document.getElementById(id);
+            box.innerHTML = '';
+            if (placeholderText) box.appendChild(el('div', { class: 'empty' }, placeholderText));
+            return box;
+        }
+
+        function renderToday(state, d) {
+            const box = clearBox('today-list');
+            const count = document.getElementById('today-count');
+            const list = d.todayList.sort((a, b) => (a.a1 || '').localeCompare(b.a1 || ''));
+            count.textContent = `${list.filter(s => !s.done).length}건`;
+            if (list.length === 0) { box.appendChild(el('div', { class: 'empty' }, '오늘 예정된 일정이 없습니다.')); return; }
+
+            list.forEach(s => {
+                const programName = state.settings.programs.find(p => p.id === s.programId)?.name || s.programId || '프로그램';
+                const title = `${programName} - ${s.a1 || ''}${s.a2 ? (' · ' + s.a2) : ''} (${s.sessionNo || ''}회차)`;
+                const left = el('div', { class: 'left' },
+                    el('input', {
+                        type: 'checkbox', class: 'checkbox', checked: s.done ? 'checked' : undefined, onchange: () => {
+                            s.done = !s.done; s.doneDate = s.done ? fmtDate(today) : null; saveState(state); refresh();
+                        }
+                    }),
+                    el('div', {}, title)
+                );
+                const right = el('div', {}, el('span', { class: 'pill' }, fmtDate(s.plannedDate)));
+                box.appendChild(el('div', { class: 'row' }, left, right));
+            });
+        }
+
+        function renderWeekMonth(state, d) {
+            document.getElementById('week-meta').textContent = `${fmtDate(startOfWeek(today))} ~ ${fmtDate(endOfWeek(today))}`;
+            document.getElementById('month-meta').textContent = `${fmtDate(startOfMonth(today))} ~ ${fmtDate(endOfMonth(today))}`;
+            document.getElementById('week-count').textContent = `${d.weekList.filter(s => s.done).length}/${d.weekList.length}`;
+            document.getElementById('month-count').textContent = `${d.monthList.filter(s => s.done).length}/${d.monthList.length}`;
+        }
+
+        function renderBars(state, d) {
+            const perfBox = clearBox('performance-bars');
+            const budgBox = clearBox('budget-bars');
+            const values = Object.values(d.byProgram);
+            if (values.length === 0) {
+                perfBox.appendChild(el('div', { class: 'empty' }, '설정된 사업이 없습니다.'));
+                budgBox.appendChild(el('div', { class: 'empty' }, '설정된 예산이 없습니다.'));
+                return;
+            }
+            values.forEach(v => {
+                const perfPct = Math.max(0, Math.min(1, v.perfRate ?? 0)) * 100;
+                perfBox.appendChild(
+                    el('div', { class: 'bar' },
+                        el('div', { class: 'label' }, el('span', {}, v.program.name), el('span', { class: 'knum sub' }, `${v.actualSessions}/${v.targetSessions}회 · ${v.actualParticipants}/${v.targetParticipants}명`)),
+                        el('div', { class: 'track' }, el('div', { class: 'fill', style: `width:${perfPct.toFixed(1)}%` }))
+                    )
+                );
+                const budgPct = Math.max(0, Math.min(1, v.budgRate ?? 0)) * 100;
+                budgBox.appendChild(
+                    el('div', { class: 'bar' },
+                        el('div', { class: 'label' }, el('span', {}, v.program.name), el('span', { class: 'knum sub' }, `${(v.used || 0).toLocaleString()} / ${(v.planned || 0).toLocaleString()} 원`)),
+                        el('div', { class: 'track' }, el('div', { class: 'fill alt', style: `width:${budgPct.toFixed(1)}%` }))
+                    )
+                );
+            });
+        }
+
+        function renderOverdue(state, d) {
+            const box = clearBox('overdue-list');
+            document.getElementById('overdue-count').textContent = `${d.overdue.length}건`;
+            if (d.overdue.length === 0) { box.appendChild(el('div', { class: 'empty' }, '지연된 일정이 없습니다.')); return; }
+            d.overdue.forEach(s => {
+                const programName = state.settings.programs.find(p => p.id === s.programId)?.name || s.programId || '프로그램';
+                const title = `${programName} - ${s.a1 || ''}${s.a2 ? (' · ' + s.a2) : ''} (${s.sessionNo || ''}회차)`;
+                const left = el('div', {}, el('div', {}, title), el('div', { class: 'sub' }, `예정일: ${fmtDate(s.plannedDate)}`));
+                const right = el('div', {}, el('span', { class: 'pill red' }, `D+${s.dplus}일`));
+                box.appendChild(el('div', { class: 'row' }, el('div', { class: 'left' }, left), right));
+            });
+        }
+
+        function renderBudgetWarnings(state) {
+            const box = clearBox('budget-warnings');
+            const plans = state.settings.budgets;
+            if (plans.length === 0) { box.appendChild(el('div', { class: 'empty' }, '임계치를 초과한 항목이 없습니다.')); return; }
+
+            const map = new Map(); // key=programId|a1|a2|item
+            state.settings.budgets.forEach(p => {
+                const key = [p.programId, p.a1, p.a2 || '', p.item].join('|');
+                const used = state.budgetLogs
+                    .filter(b => b.programId === p.programId && b.a1 === p.a1 && (b.a2 || '') === (p.a2 || '') && b.item === p.item)
+                    .reduce((s, b) => s + (+b.amount || 0), 0);
+                const rate = p.planned > 0 ? used / p.planned : 0;
+                map.set(key, { plan: p, used, rate });
+            });
+            const warn = Array.from(map.values()).filter(x => x.rate >= 0.8).sort((a, b) => b.rate - a.rate);
+            if (warn.length === 0) { box.appendChild(el('div', { class: 'empty' }, '임계치를 초과한 항목이 없습니다.')); return; }
+
+            warn.forEach(x => {
+                const prog = state.settings.programs.find(p => p.id === x.plan.programId);
+                const title = `${prog?.name || x.plan.programId} · ${x.plan.a1}${x.plan.a2 ? (' · ' + x.plan.a2) : ''} · ${x.plan.item}`;
+                const pct = Math.min(100, (x.rate * 100)).toFixed(0);
+                box.appendChild(el('div', { class: 'warn-row' },
+                    el('div', {}, title),
+                    el('div', { class: 'knum' }, `${x.used.toLocaleString()} / ${x.plan.planned.toLocaleString()}원 · ${pct}%`)
+                ));
+            });
+        }
+
+        function refresh() {
+            const state = loadState();
+            const d = derive(state);
+            renderToday(state, d);
+            renderWeekMonth(state, d);
+            renderBars(state, d);
+            renderOverdue(state, d);
+            renderBudgetWarnings(state);
+        }
+
+        // 초기 렌더
+        refresh();
+
+        // 개발 편의 함수
+        window.__swms = {
+            load: loadState,
+            save: saveState,
+            reset: () => { localStorage.setItem(LS_KEY, JSON.stringify(EMPTY_STATE)); location.reload(); }
+        };
+    </script>
+</body>
+
+</html>
