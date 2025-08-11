@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 
     <style>
-        /* ===== 홈 파일과 동일한 토큰/레이아웃 ===== */
+        /* ===== 홈과 동일 토큰 ===== */
         :root {
             --bg: #0c0f13;
             --card: #151a22;
@@ -125,7 +125,6 @@
             padding: 24px 0 56px
         }
 
-        /* 공통 카드/텍스트 */
         .card {
             background: var(--card);
             border: 1px solid var(--line);
@@ -172,7 +171,6 @@
             font-variant-numeric: tabular-nums
         }
 
-        /* 이 페이지 전용 레이아웃 */
         .section {
             display: flex;
             flex-direction: column;
@@ -251,7 +249,6 @@
             cursor: not-allowed
         }
 
-        /* 테이블 */
         .twrap {
             overflow: auto;
             border: 1px solid var(--line);
@@ -295,7 +292,6 @@
             color: var(--muted)
         }
 
-        /* 달성률 바 */
         .ratebar {
             height: 10px;
             background: #0d1219;
@@ -331,7 +327,7 @@
     </header>
 
     <main class="wrap">
-        <!-- 실적 입력 -->
+        <!-- 입력 -->
         <section class="card section" aria-label="실적 입력">
             <div class="title">
                 <h3>실적 입력</h3>
@@ -369,7 +365,7 @@
             </div>
         </section>
 
-        <!-- 보기 필터 -->
+        <!-- 필터 -->
         <section class="card section" aria-label="보기 필터">
             <div class="title">
                 <h3>보기 필터</h3>
@@ -457,30 +453,36 @@
             </div>
         </section>
 
-        <!-- 분기별 합계 -->
+        <!-- 분기별 합계(세부활동 단위 · 합계/수급/일반) -->
         <section class="section" aria-label="분기별 합계">
             <div class="title">
                 <h3>분기별 합계 <span class="pill" id="label-year">-</span></h3>
-                <div class="sub">회기 · 총인원만 표시</div>
+                <div class="sub">사업 · 활동별로 각 분기 합계/수급/일반 인원</div>
             </div>
             <div class="twrap">
-                <table>
+                <table style="min-width:1260px">
                     <thead>
                         <tr>
                             <th>사업명</th>
-                            <th class="center">Q1 회기</th>
-                            <th class="right">Q1 인원</th>
-                            <th class="center">Q2 회기</th>
-                            <th class="right">Q2 인원</th>
-                            <th class="center">Q3 회기</th>
-                            <th class="right">Q3 인원</th>
-                            <th class="center">Q4 회기</th>
-                            <th class="right">Q4 인원</th>
+                            <th>세부활동1</th>
+                            <th>세부활동2</th>
+                            <th class="right">Q1 합계</th>
+                            <th class="right muted">Q1 수급</th>
+                            <th class="right muted">Q1 일반</th>
+                            <th class="right">Q2 합계</th>
+                            <th class="right muted">Q2 수급</th>
+                            <th class="right muted">Q2 일반</th>
+                            <th class="right">Q3 합계</th>
+                            <th class="right muted">Q3 수급</th>
+                            <th class="right muted">Q3 일반</th>
+                            <th class="right">Q4 합계</th>
+                            <th class="right muted">Q4 수급</th>
+                            <th class="right muted">Q4 일반</th>
                         </tr>
                     </thead>
                     <tbody id="tb-quarter">
                         <tr>
-                            <td colspan="9">
+                            <td colspan="15">
                                 <div class="empty">해당 연도 데이터가 없습니다.</div>
                             </td>
                         </tr>
@@ -525,21 +527,18 @@
     </main>
 
     <script>
-        /* ===== 상태 (홈 파일 구조와 동일) ===== */
-        const LS_KEY = 'swms_home_v1'; // 홈과 공유
+        /* ===== 상태 (홈과 공유) ===== */
+        const LS_KEY = 'swms_home_v1';
         const EMPTY_STATE = Object.freeze({
             settings: { programs: [], activities: [], budgets: [], schedules: [] },
             performanceLogs: [],
             budgetLogs: []
         });
-
         function loadState() {
             try {
                 const raw = localStorage.getItem(LS_KEY);
                 return raw ? JSON.parse(raw) : structuredClone(EMPTY_STATE);
-            } catch (e) {
-                return structuredClone(EMPTY_STATE);
-            }
+            } catch (e) { return structuredClone(EMPTY_STATE); }
         }
         function saveState(s) { localStorage.setItem(LS_KEY, JSON.stringify(s)); }
 
@@ -550,7 +549,6 @@
         const ymFrom = (d) => { const T = d instanceof Date ? d : new Date(d); return `${T.getFullYear()}-${pad(T.getMonth() + 1)}`; };
         const quarterOf = (d) => Math.ceil((d.getMonth() + 1) / 3);
         const sumBy = (arr, sel) => arr.reduce((s, x) => s + (+sel(x) || 0), 0);
-
         const $ = (q) => document.querySelector(q);
 
         /* ===== 전역 ===== */
@@ -574,7 +572,7 @@
         const fYear = $('#f-year');
         const btnResetFilter = $('#btn-reset-filter');
 
-        /* ===== 옵션 채우기 ===== */
+        /* ===== 옵션 ===== */
         function fillProgramOptions(selectEl, withAll = false) {
             selectEl.innerHTML = '';
             if (withAll) selectEl.append(new Option('전체', ''));
@@ -656,45 +654,31 @@
                 alert('일자, 사업명, 세부활동1은 필수입니다.');
                 return;
             }
-            // 설정에 존재하는 키인지 검증
             const exists = state.settings.activities.some(a =>
                 a.programId === programId && a.a1 === a1 && (a.a2 || null) === (a2 || null)
             );
-            if (!exists) {
-                alert('설정 탭에 없는 활동입니다. 먼저 설정에서 등록하세요.');
-                return;
-            }
+            if (!exists) { alert('설정 탭에 없는 활동입니다. 먼저 설정에서 등록하세요.'); return; }
 
             if (editingId) {
                 const idx = state.performanceLogs.findIndex(l => l.id === editingId);
                 if (idx >= 0) {
                     state.performanceLogs[idx] = { id: editingId, date, programId, a1, a2, recipients, general };
-                    saveState(state);
-                    resetEditing();
-                    refresh();
+                    saveState(state); resetEditing(); refresh();
                 }
             } else {
                 const id = `${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
                 state.performanceLogs.push({ id, date, programId, a1, a2, recipients, general });
-                saveState(state);
-                clearInputs();
-                refresh();
+                saveState(state); clearInputs(); refresh();
             }
         }
         function clearInputs() {
             inDate.value = fmtDate(today);
-            inRec.value = '';
-            inGen.value = '';
-            editingId = null;
-            btnAdd.textContent = '추가';
-            btnCancel.style.display = 'none';
+            inRec.value = ''; inGen.value = '';
+            editingId = null; btnAdd.textContent = '추가'; btnCancel.style.display = 'none';
         }
         function resetEditing() {
-            editingId = null;
-            btnAdd.textContent = '추가';
-            btnCancel.style.display = 'none';
-            inRec.value = '';
-            inGen.value = '';
+            editingId = null; btnAdd.textContent = '추가'; btnCancel.style.display = 'none';
+            inRec.value = ''; inGen.value = '';
         }
 
         /* ===== 필터 적용 ===== */
@@ -767,8 +751,7 @@
                     tSessions: tgt.targetSessions || 0,
                     aSessions: sessionsActual,
                     tParticipants: tgt.targetParticipants || 0,
-                    recipients, general, total,
-                    rate
+                    recipients, general, total, rate
                 });
             });
 
@@ -782,7 +765,7 @@
 
         function deriveMonthly() {
             const ym = currentFilters().ym;
-            $('#label-month').textContent = ym;
+            document.getElementById('label-month').textContent = ym;
             const logs = state.performanceLogs.filter(l => ymFrom(l.date) === ym);
             const byProg = new Map();
             logs.forEach(l => {
@@ -801,25 +784,76 @@
             });
         }
 
-        function deriveQuarter() {
+        // === 분기: 활동 단위 × (합계/수급/일반) ===
+        function deriveQuarterRows() {
             const year = currentFilters().year;
-            $('#label-year').textContent = String(year);
-            return state.settings.programs.map(p => {
-                const L = state.performanceLogs.filter(l => new Date(l.date).getFullYear() === year && l.programId === p.id);
-                const byQ = [1, 2, 3, 4].map(q => {
-                    const list = L.filter(l => quarterOf(new Date(l.date)) === q);
-                    return {
-                        sessions: list.length,
-                        total: sumBy(list, x => (+x.recipients || 0) + (+x.general || 0))
-                    };
-                });
-                return { programName: p.name, byQ };
+            document.getElementById('label-year').textContent = String(year);
+
+            // 연도 필터된 로그만
+            const yearLogs = state.performanceLogs.filter(l => new Date(l.date).getFullYear() === year);
+
+            // 보이기 필터(프로그램/활동1)도 적용
+            const { programId, a1 } = currentFilters();
+            const filtered = yearLogs.filter(l => {
+                if (programId && l.programId !== programId) return false;
+                if (a1 && l.a1 !== a1) return false;
+                return true;
             });
+
+            // 그룹: programId|a1|a2
+            const group = new Map();
+            filtered.forEach(l => {
+                const k = [l.programId, l.a1, l.a2 || ''].join('|');
+                if (!group.has(k)) group.set(k, []);
+                group.get(k).push(l);
+            });
+
+            const progName = new Map(state.settings.programs.map(p => [p.id, p.name]));
+            const rows = [];
+            [...group.entries()].forEach(([key, list]) => {
+                const [pid, a1v, a2s] = key.split('|');
+                const q = { 1: { rec: 0, gen: 0 }, 2: { rec: 0, gen: 0 }, 3: { rec: 0, gen: 0 }, 4: { rec: 0, gen: 0 } };
+                list.forEach(l => {
+                    const qn = quarterOf(new Date(l.date));
+                    q[qn].rec += (+l.recipients || 0);
+                    q[qn].gen += (+l.general || 0);
+                });
+                rows.push({
+                    programName: progName.get(pid) || pid,
+                    a1: a1v,
+                    a2: a2s || '',
+                    q1: { total: q[1].rec + q[1].gen, rec: q[1].rec, gen: q[1].gen },
+                    q2: { total: q[2].rec + q[2].gen, rec: q[2].rec, gen: q[2].gen },
+                    q3: { total: q[3].rec + q[3].gen, rec: q[3].rec, gen: q[3].gen },
+                    q4: { total: q[4].rec + q[4].gen, rec: q[4].rec, gen: q[4].gen }
+                });
+            });
+
+            // 설정에는 있으나 해당 연도 실적이 0인 활동도 보여주려면 아래 블록을 활성화
+            // (필요 시 주석 해제)
+            /*
+            state.settings.activities.forEach(a=>{
+              const k = [a.programId,a.a1,a.a2||''].join('|');
+              if(!group.has(k) && (!programId || programId===a.programId) && (!a1 || a1===a.a1)){
+                rows.push({
+                  programName: progName.get(a.programId)||a.programId, a1:a.a1, a2:a.a2||'',
+                  q1:{total:0,rec:0,gen:0}, q2:{total:0,rec:0,gen:0}, q3:{total:0,rec:0,gen:0}, q4:{total:0,rec:0,gen:0}
+                });
+              }
+            });
+            */
+
+            rows.sort((x, y) => {
+                if (x.programName !== y.programName) return x.programName.localeCompare(y.programName, 'ko');
+                if (x.a1 !== y.a1) return x.a1.localeCompare(y.a1, 'ko');
+                return (x.a2 || '').localeCompare(y.a2 || '', 'ko');
+            });
+            return rows;
         }
 
         /* ===== 렌더 ===== */
         function renderActivity() {
-            const tbody = $('#tb-activity');
+            const tbody = document.getElementById('tb-activity');
             const rows = deriveActivityRows();
             if (rows.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="9"><div class="empty">설정된 활동이 없습니다.</div></td></tr>`;
@@ -845,7 +879,7 @@
         }
 
         function renderMonth() {
-            const tbody = $('#tb-month');
+            const tbody = document.getElementById('tb-month');
             const rows = deriveMonthly();
             if (rows.every(r => r.sessions === 0 && r.total === 0)) {
                 tbody.innerHTML = `<tr><td colspan="5"><div class="empty">해당 월 데이터가 없습니다.</div></td></tr>`;
@@ -866,26 +900,38 @@
         }
 
         function renderQuarter() {
-            const tbody = $('#tb-quarter');
-            const rows = deriveQuarter();
-            if (rows.every(r => r.byQ.every(q => q.sessions === 0 && q.total === 0))) {
-                tbody.innerHTML = `<tr><td colspan="9"><div class="empty">해당 연도 데이터가 없습니다.</div></td></tr>`;
+            const tbody = document.getElementById('tb-quarter');
+            const rows = deriveQuarterRows();
+            if (rows.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="15"><div class="empty">해당 연도 데이터가 없습니다.</div></td></tr>`;
                 return;
             }
             tbody.innerHTML = '';
             rows.forEach(r => {
-                const cells = r.byQ.flatMap(q => [
-                    `<td class="center knum">${q.sessions}</td>`,
-                    `<td class="right knum">${q.total.toLocaleString()}</td>`
-                ]).join('');
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${r.programName}</td>${cells}`;
+                tr.innerHTML = `
+          <td>${r.programName}</td>
+          <td>${r.a1}</td>
+          <td>${r.a2 || '—'}</td>
+          <td class="right knum">${r.q1.total.toLocaleString()}</td>
+          <td class="right knum muted">${r.q1.rec.toLocaleString()}</td>
+          <td class="right knum muted">${r.q1.gen.toLocaleString()}</td>
+          <td class="right knum">${r.q2.total.toLocaleString()}</td>
+          <td class="right knum muted">${r.q2.rec.toLocaleString()}</td>
+          <td class="right knum muted">${r.q2.gen.toLocaleString()}</td>
+          <td class="right knum">${r.q3.total.toLocaleString()}</td>
+          <td class="right knum muted">${r.q3.rec.toLocaleString()}</td>
+          <td class="right knum muted">${r.q3.gen.toLocaleString()}</td>
+          <td class="right knum">${r.q4.total.toLocaleString()}</td>
+          <td class="right knum muted">${r.q4.rec.toLocaleString()}</td>
+          <td class="right knum muted">${r.q4.gen.toLocaleString()}</td>
+        `;
                 tbody.appendChild(tr);
             });
         }
 
         function renderLogs() {
-            const tbody = $('#tb-logs');
+            const tbody = document.getElementById('tb-logs');
             const logs = applyLogFilter(state.performanceLogs).slice().sort((a, b) => new Date(b.date) - new Date(a.date));
             if (logs.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="8"><div class="empty">입력된 로그가 없습니다.</div></td></tr>`;
@@ -943,7 +989,7 @@
             });
         }
 
-        /* ===== CSV 내보내기 ===== */
+        /* ===== CSV ===== */
         function exportCSV() {
             const header = ['date', 'program', 'activity1', 'activity2', 'recipients', 'general', 'total'];
             const progById = new Map(state.settings.programs.map(p => [p.id, p.name]));
@@ -972,9 +1018,8 @@
             URL.revokeObjectURL(url);
         }
 
-        /* ===== 리프레시 & 초기화 ===== */
+        /* ===== 리프레시 ===== */
         function refresh() {
-            // 필터 종속 보정
             if (fProgram.value) fillA1Options(fA1, fProgram.value, true);
             renderActivity();
             renderMonth();
@@ -982,18 +1027,15 @@
             renderLogs();
         }
 
-        // 초기 바인딩
+        // 초기화
         initForm();
         initFilter();
-        $('#btn-export').addEventListener('click', exportCSV);
-
-        // 개발 편의
+        document.getElementById('btn-export').addEventListener('click', exportCSV);
         window.__swms = {
             load: () => loadState(),
             save: (s) => saveState(s),
             reset: () => { localStorage.setItem(LS_KEY, JSON.stringify(EMPTY_STATE)); location.reload(); }
         };
-
         refresh();
     </script>
 </body>
